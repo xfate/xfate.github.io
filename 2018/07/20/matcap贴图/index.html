@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Xujianming�Ĳ���">
+    <meta name="keyword"  content="��Ϸ����">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        matcap贴图 - Xujianming�Ĳ��� | Xujianming&#39;s Blog
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> ��Ϸ�����ʼ������� </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>Xujianming</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-matcap基础实现"><span class="toc-text">1.matcap基础实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Matcap-贴图获取"><span class="toc-text">Matcap 贴图获取</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-matcap-法线贴图实现"><span class="toc-text">2.matcap + 法线贴图实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-matcap-实现水晶效果"><span class="toc-text">3.matcap 实现水晶效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-matcap-实现伪PBR"><span class="toc-text">4.matcap 实现伪PBR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#todo"><span class="toc-text">todo</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i> ��Ϸ�����ʼ������� </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        matcap贴图
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2018-07-20 13:43:12</span></span>
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <blockquote>
+<p>MatCap（Material Capture),使用指定的材质球贴图，作为当前材质的视图空间环境贴图（view-space environment map），实现具有均一表面着色的反射材质物体的显示。</p>
+</blockquote>
+<p>&emsp;matcap贴图其实是从某个光照条件下，从某个摄像机方向，特定角度的表现结果，把这个光照结果映射到模型上。贴图和视角相关，如果移动模型，贴图没有任何变化，移动摄像机，贴图就会发生变化。</p>
+<h3 id="1-matcap基础实现"><a href="#1-matcap基础实现" class="headerlink" title="1.matcap基础实现"></a>1.matcap基础实现</h3><h4 id="Matcap-贴图获取"><a href="#Matcap-贴图获取" class="headerlink" title="Matcap 贴图获取"></a>Matcap 贴图获取</h4><p><a href="https://www.pinterest.com/evayali/matcap/" target="_blank" rel="noopener">https://www.pinterest.com/evayali/matcap/</a></p>
+<p><a href="http://pixologic.com/zbrush/downloadcenter/library/#prettyPhoto" target="_blank" rel="noopener">http://pixologic.com/zbrush/downloadcenter/library/#prettyPhoto</a></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Shader </span><span class="string">"Custom/MatCap\_Diffuse"</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    Properties</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        _MatCap (<span class="string">"Mat Cap"</span>,<span class="number">2</span>D) = <span class="string">"white"</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">        _MainColor(<span class="string">"Main Color"</span>,color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">SubShader</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="keyword"> </span>   &#123;</span><br><span class="line"></span><br><span class="line">        Tags&#123; <span class="string">"RenderType"</span>=<span class="string">"Opaque"</span>&#125;</span><br><span class="line"></span><br><span class="line">        LOD <span class="number">100</span></span><br><span class="line"></span><br><span class="line">        Pass</span><br><span class="line"></span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line">            CGPROGRAM</span><br><span class="line"></span><br><span class="line">            <span class="comment">#pragmavertex vert</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">#pragmafragment frag</span></span><br><span class="line"></span><br><span class="line">            </span><br><span class="line"></span><br><span class="line">            <span class="comment">#include "UnityCG.cginc"</span></span><br><span class="line"></span><br><span class="line">            structappdata</span><br><span class="line"></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                float4vertex : POSITION<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">                float2uv : TEXCOORD0<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">                float3normal : <span class="keyword">NORMAL;</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="keyword"> </span>           &#125;<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">            structv<span class="number">2f</span></span><br><span class="line"></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                float4vertex : SV _POSITION<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">                float2cap : TEXCOORD0<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">            &#125;<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">            sampler2D _MatCap<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">            fixed4 _MainColor<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">            v<span class="number">2f</span> vert(appdata v)</span><br><span class="line"></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                v<span class="number">2f</span> o<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">                o.vertex = UnityObjectToClipPos(v.vertex)<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">                float3worldNorm = <span class="keyword">normalize(mul(float4(v.normal,0.0f),unity_WorldToObject));</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="keyword"> </span>               worldNorm = <span class="keyword">mul((float3x3)UNITY_MATRIX_V,worldNorm);</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="keyword"> </span>               o.cap = worldNorm.xy * <span class="number">0</span>.<span class="number">5</span>+ <span class="number">0</span>.<span class="number">5</span><span class="comment">;</span></span><br><span class="line"></span><br><span class="line">                returno<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            </span><br><span class="line"></span><br><span class="line">            fixed4 frag(v<span class="number">2f</span> i) : SV_Target</span><br><span class="line"></span><br><span class="line">            &#123;</span><br><span class="line"></span><br><span class="line">                fixed4matcapColor = tex2D(_MatCap,i.cap)<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">                returnmatcapColor * _MainColor<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            ENDCG</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码关键在：<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">float3 worldNorm = normalize(<span class="name">mul</span>(<span class="name">float4</span>(<span class="name">v</span>.normal,<span class="number">0.0</span>f),unity_WorldToObject))<span class="comment">;</span></span><br><span class="line">                worldNorm = mul((<span class="name">float3x3</span>)UNITY_MATRIX_V,worldNorm)<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p>把法线先转到世界空间，再转到视图空间，因为视图空间下的法线向量是[-1，1]，贴图的UV是[0，1]，所以还得做个一个映射。<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> o.cap = worldNorm.xy * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br></pre></td></tr></table></figure></p>
+<p>模拟的金属表现效果：</p>
+<h3 id="2-matcap-法线贴图实现"><a href="#2-matcap-法线贴图实现" class="headerlink" title="2.matcap + 法线贴图实现"></a>2.matcap + 法线贴图实现</h3><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">  v<span class="number">2f</span> vert (appdata v)</span><br><span class="line">            &#123;</span><br><span class="line">                v<span class="number">2f</span> o<span class="comment">;</span></span><br><span class="line">                o.vertex = UnityObjectToClipPos(v.vertex)<span class="comment">;</span></span><br><span class="line">                o.uv = v.uv<span class="comment">;</span></span><br><span class="line">                float3 worldNorm = <span class="keyword">normalize(mul(float4(v.normal,0.0f),unity_WorldToObject));</span></span><br><span class="line"><span class="keyword"> </span>               float3 worldTangent = <span class="keyword">mul(unity_ObjectToWorld,v.tangent);</span></span><br><span class="line"><span class="keyword"> </span>               float3 worldBinormal = cross(worldNorm,worldTangent)*v.tangent.w<span class="comment">;</span></span><br><span class="line">                float3 worldPos = <span class="keyword">mul(unity_ObjectToWorld,v.vertex);</span></span><br><span class="line"><span class="keyword"> </span>               o.TtoW1 = float4(worldTangent.x,worldBinormal.x,worldNorm.x,worldPos.x)<span class="comment">;</span></span><br><span class="line">                o.TtoW2 = float4(worldTangent.y,worldBinormal.y,worldNorm.y,worldPos.y)<span class="comment">;</span></span><br><span class="line">                o.TtoW3 = float4(worldTangent.z,worldBinormal.z,worldNorm.z,worldPos.z)<span class="comment">;</span></span><br><span class="line">                return o<span class="comment">;</span></span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            fixed4 frag (v<span class="number">2f</span> i) : SV_Target</span><br><span class="line">            &#123;</span><br><span class="line">                fixed4 mainTexColor = tex2D(_MainTex,i.uv)<span class="comment">;</span></span><br><span class="line">                fixed3 <span class="keyword">normal </span>= UnpackNormal(tex2D(_NormalMap,i.uv))<span class="comment">;</span></span><br><span class="line">                float3 worldNorm<span class="comment">;</span></span><br><span class="line">                worldNorm.x = dot(i.TtoW1.xyz,<span class="keyword">normal);</span></span><br><span class="line"><span class="keyword"> </span>               worldNorm.y = dot(i.TtoW2.xyz,<span class="keyword">normal);</span></span><br><span class="line"><span class="keyword"> </span>               worldNorm.z = dot(i.TtoW3.xyz,<span class="keyword">normal);</span></span><br><span class="line"><span class="keyword"> </span>               fixed3 worldNormView = <span class="keyword">normalize(mul((float3x3)UNITY_MATRIX_V,worldNorm));</span></span><br><span class="line"><span class="keyword"> </span>               fixed4 matcapColor = tex2D(_MatCap,worldNormView.xy)<span class="comment">;</span></span><br><span class="line">                return matcapColor*mainTexColor*_MainColor*<span class="number">2</span><span class="comment">;</span></span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-matcap-实现水晶效果"><a href="#3-matcap-实现水晶效果" class="headerlink" title="3.matcap 实现水晶效果"></a>3.matcap 实现水晶效果</h3><h3 id="4-matcap-实现伪PBR"><a href="#4-matcap-实现伪PBR" class="headerlink" title="4.matcap 实现伪PBR"></a>4.matcap 实现伪PBR</h3><h3 id="todo"><a href="#todo" class="headerlink" title="todo"></a>todo</h3>
+        
+            <div class="donate-container">
+    <div class="donate-button">
+        <button id="donate-button">赞赏</button>
+    </div>
+    <div class="donate-img-container hide" id="donate-img-container">
+        <img id="donate-img" src="" data-src="/img/donate.jpg">
+        <p> ��л���� </p>
+    </div>
+</div>
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+        <li>
+            <a target="_blank"  href="https://github.com/xfate">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span>/</span>
+        
+        <span><a href="#">It helps SEO</a></span>
+        <span>/</span>
+        
+    </p>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<script src="/js/gitment.js"></script>
+<script>
+    var gitment = new Gitment({
+        id: 'matcap贴图',
+        owner: 'aircloud',
+        repo: 'hexo-aircloud-blog',
+        oauth: {
+            client_id: 'your-id-created-by-https://github.com/settings/applications/new',
+            client_secret: 'your-secret-created-by-https://github.com/settings/applications/new',
+        },
+    })
+    gitment.render('comment-container')
+</script>
+
+</html>
