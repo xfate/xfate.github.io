@@ -143,32 +143,16 @@
         <h2 id="各向异性"><a href="#各向异性" class="headerlink" title="各向异性"></a>各向异性</h2><p>​    什么是各向异性？wiki百科:<strong>非均向性</strong>（<strong>anisotropy</strong>），或作<strong>各向异性</strong>，与<strong>各向同性</strong>相反，指物体的全部或部分物理、化学等性质随方向的不同而有所变化的特性。</p>
 <p>来自wiki的解释如上。<a href="https://zh.wikipedia.org/wiki/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7</a> </p>
 <p>​    我们主要是关注各向异性的光学特性，这个特性存在各种各样的物体上，比如头发，丝绸 金属等。<br>本文主要讲一下头发的渲染。<br>整个渲染模型来自于2012年ATi的一篇头发渲染文章：<br><a href="https://developer.amd.com/wordpress/media/2012/10/Scheuermann_HairRendering.pdf" target="_blank" rel="noopener">https://developer.amd.com/wordpress/media/2012/10/Scheuermann_HairRendering.pdf</a></p>
-<h2 id="kajiya-kay-hair-model"><a href="#kajiya-kay-hair-model" class="headerlink" title="kajiya kay hair model"></a>kajiya kay hair model</h2><p>​    Kajiya kay hair model 高光模型如图</p>
-<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/4FJaak5aAA.png?imageslim" alt="mark"></p>
-<p>N：法线</p>
-<p>T：切线</p>
-<p>L： 灯光方向</p>
-<p>H：半角向量（L+V）</p>
-<p>V：视角方向</p>
-<p>上图假定了发丝方向和切线方向一致。然后使用的是发丝的切线而不是这一点的法线来进行计算高光。</p>
-<p>Kajiya kay hair model 高光模型用以下公式代替phong高光</p>
+<h2 id="kajiya-kay-hair-model"><a href="#kajiya-kay-hair-model" class="headerlink" title="kajiya kay hair model"></a>kajiya kay hair model</h2><p>​    Kajiya kay hair model 高光模型如图<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/4FJaak5aAA.png?imageslim" alt="mark"><br>N：法线<br>T：切线<br>L： 灯光方向<br>H：半角向量（L+V）<br>V：视角方向<br>上图假定了发丝方向和切线方向一致。然后使用的是发丝的切线而不是这一点的法线来进行计算高光。<br>Kajiya kay hair model 高光模型用以下公式代替phong高光</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fixed StrandSpecular(fixed3 T,fixed3 V,fixed3 L,fixed exponent)</span><br><span class="line">&#123;</span><br><span class="line">	float3 H = normalize(L+V);</span><br><span class="line">	float dotTH = dot(T,H);</span><br><span class="line">	float sinTH = sqrt(1- dotTH * dotTH);</span><br><span class="line">	float dirAtten = smoothstep(-1,0,dotTH);	</span><br><span class="line">	return dirAtten*pow(sinTH,exponent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>dotTH表示向量H在T方向的投影长度，值是-1，1，经过smoothstep函数的处理，让高光衰减随着TH之间的夹角平滑过渡。因此dirAtten 的作用是通过TH的方向来控制高光范围的衰减系数。</p>
-<p>​    为了让高光更自然点，随着发丝拉伸偏移，需要对切线进行偏移。</p>
-<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/HGAH4H24mJ.png?imageslim" alt="mark"></p>
-<p>​    正向的偏移意味着向发根的高光偏移，而负向的偏移则意味着偏向发梢。</p>
-<p>​    偏移多少呢？可以设定一个shift偏移量，shift 可以通过纹理采样得到。</p>
-<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/jJEjldijiL.png?imageslim" alt="mark"></p>
-<p>可以得到高光偏移的公式</p>
+<p>​    为了让高光更自然点，随着发丝拉伸偏移，需要对切线进行偏移。<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/HGAH4H24mJ.png?imageslim" alt="mark"><br>​    正向的偏移意味着向发根的高光偏移，而负向的偏移则意味着偏向发梢。</p>
+<p>​    偏移多少呢？可以设定一个shift偏移量，shift 可以通过纹理采样得到。<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/jJEjldijiL.png?imageslim" alt="mark"><br>可以得到高光偏移的公式</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fixed3 <span class="title">ShiftTangent</span><span class="params">(float3 tangent,float3 normal,<span class="keyword">float</span> shift)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> normalize(tangent + shift * normal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意，因为假定了切线方向和头发方向一致，这里的参数用的是切线，实际上很多纹理的头发uv展开是从上到下的，而tangent方向是从左到右的，这个时候，传进ShiftTangent函数的就不是tangent，而是binormal。</p>
-<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180807/2CK8H0IBbB.png?imageslim" alt="mark"></p>
-<p>​    在kajiya kay 头发着色模型里，有两层高光。</p>
+<p>注意，因为假定了切线方向和头发方向一致，这里的参数用的是切线，实际上很多纹理的头发uv展开是从上到下的，而tangent方向是从左到右的，这个时候，传进ShiftTangent函数的就不是tangent，而是binormal。<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180807/2CK8H0IBbB.png?imageslim" alt="mark"><br>​    在kajiya kay 头发着色模型里，有两层高光。</p>
 <p>​    一层高光向发尖偏移。第二层高光向发根偏移，混合了头发自身的颜色。</p>
 <h2 id="关键代码实现"><a href="#关键代码实现" class="headerlink" title="关键代码实现"></a>关键代码实现</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">float3 worldPos = float3(i.TtoW0.w,i.TtoW1.w,i.TtoW2.w);</span><br><span class="line">float3 lightDir = normalize(UnityWorldSpaceLightDir(worldPos));</span><br><span class="line">float3 viewDir = normalize(UnityWorldSpaceViewDir(worldPos));</span><br><span class="line">float3 tNormal  = UnpackNormal(tex2D(_NormalMap,i.uv));</span><br><span class="line">fixed3 worldBinormal = normalize(half3(i.TtoW0.y, i.TtoW1.y, i.TtoW2.y));	</span><br><span class="line">float3x3 matT2W = float3x3(i.TtoW0.xyz,i.TtoW1.xyz,i.TtoW2.xyz);</span><br><span class="line">float3 normal = normalize(mul(matT2W,tNormal));</span><br><span class="line">float4 mainTex =  tex2D(_MainTex,i.uv);</span><br><span class="line">float3 tangent = float3(i.TtoW0.x,i.TtoW1.x,i.TtoW2.x);</span><br><span class="line">float shiftTex = tex2D(_tSpecShift,i.uv).r;</span><br><span class="line">//计算两层高光偏移</span><br><span class="line">float3 t1 = ShiftTangent(worldBinormal,normal,_PrimaryShift+shiftTex);</span><br><span class="line">float3 t2 = ShiftTangent(worldBinormal,normal,_SecondaryShift+shiftTex);</span><br><span class="line">float3 diffuse = mainTex.rgb* MainColor.rgb;</span><br><span class="line">//合并两层高光</span><br><span class="line">half3 spec1 = StrandSpecular(t1, viewDir, lightDir, _specExp1)* _specularColor1;</span><br><span class="line">half3 spec2 = StrandSpecular(t2, viewDir, lightDir, _specExp2)* _specularColor2;</span><br><span class="line">float3 specular = spec1*_specular;</span><br><span class="line">specular += spec2*_specularColor2*_specular;`</span><br></pre></td></tr></table></figure>
-<p>​    </p>
 <p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/bJgLKAaLHk.png?imageslim" alt="mark"></p>
-<p>​            </p>
 
         
             <div class="donate-container">
