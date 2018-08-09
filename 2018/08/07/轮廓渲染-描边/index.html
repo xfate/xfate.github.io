@@ -89,7 +89,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-法线外扩"><span class="toc-text">1.法线外扩</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-法线外扩"><span class="toc-text">1.法线外扩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后处理实现描边效果"><span class="toc-text">后处理实现描边效果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#处理流程"><span class="toc-text">处理流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-普通后处理实现"><span class="toc-text">2.1 普通后处理实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Command-Buffer-实现"><span class="toc-text">2.2 Command Buffer 实现</span></a></li></ol></li></ol>
 </div>
     
 </div>
@@ -144,300 +144,63 @@
     </div>
     <div class="post-content ">
         <p>本文主要来讲几种描边的实现方法</p>
-<h2 id="1-法线外扩"><a href="#1-法线外扩" class="headerlink" title="1.法线外扩"></a>1.法线外扩</h2><pre><code>一般期望的描边效果，就是在模型外面有一圈选边，因此我们可以把模型扩大一点点，利用这个扩大的边缘来实现描边效果。可以看出，扩大的方向其实就是法线的方向，边缘的法线和视线夹角基本成90度。所以我们可以在第一个pass 朝法线方向扩大模型。
-要扩大模型，自然是在vertexshader阶段处理，我们实际仅需要扩大边缘，因此我们只需要渲染背面，因为我们第二个pass就会盖在第一个pass的结果上，仅留下扩大的边缘。
-</code></pre><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">				<span class="comment">//把法线转换到视图空间</span></span><br><span class="line"></span><br><span class="line">				float3 vnormal = mul((float3x3)UNITY_MATRIX_IT_MV,v.normal);</span><br><span class="line"></span><br><span class="line">				<span class="comment">//把法线转换到投影空间</span></span><br><span class="line"></span><br><span class="line">				float2 pnormal_xy = mul((float2x2)UNITY_MATRIX_P,vnormal.xy);</span><br><span class="line"></span><br><span class="line">				<span class="comment">//朝法线方向外扩</span></span><br><span class="line"></span><br><span class="line">				o.vertex.xy = o.vertex.xy + pnormal_xy * _Outline;</span><br><span class="line"></span><br><span class="line">```		</span><br><span class="line"></span><br><span class="line">整个代码实现：</span><br></pre></td></tr></table></figure>
-<p>Shader “xjm/outline”<br>{<br>    //法线外扩实现描边<br>    Properties<br>    {<br>        _MainTex (“Texture”, 2D) = “white” {}<br>        _Outline(“Outline”,float) = 0.1<br>        _OutlineColor(“OutlineColor”,Color) = (0,0,0,1)<br>    }<br>    SubShader<br>    {<br>        Tags { “RenderType”=”Opaque” }<br>        LOD 100<br>        //描边阶段，法线外扩，渲染背面<br>        Pass<br>        {<br>            //只需要边缘外扩<br>            Cull Front<br>            ZWrite Off<br>            CGPROGRAM</p>
-<pre><code>        #pragma vertex vert
-        #pragma fragment frag
-        struct appdata
-        {
-            float4 vertex : POSITION;
-            float3 normal : NORMAL;
-        };
-        struct v2f
-        {
-            float4 vertex : SV_POSITION;
-        };
-        float _Outline;
-        float4 _OutlineColor;            
-        v2f vert (appdata v)
-        {
-            v2f o;
-            o.vertex = UnityObjectToClipPos(v.vertex);
-            //把法线转换到视图空间
-            float3 vnormal = mul((float3x3)UNITY_MATRIX_IT_MV,v.normal);
-            //把法线转换到投影空间
-            float2 pnormal_xy = mul((float2x2)UNITY_MATRIX_P,vnormal.xy);
-            //朝法线方向外扩
-            o.vertex.xy = o.vertex.xy + pnormal_xy * _Outline;
-            return o;
-        }
+<h2 id="1-法线外扩"><a href="#1-法线外扩" class="headerlink" title="1.法线外扩"></a>1.法线外扩</h2><p>一般期望的描边效果，就是在模型外面有一圈选边，因此我们可以把模型扩大一点点，利用这个扩大的边缘来实现描边效果。可以看出，扩大的方向其实就是法线的方向，边缘的法线和视线夹角基本成90度。所以我们可以在第一个pass 朝法线方向扩大模型。<br>要扩大模型，自然是在vertexshader阶段处理，我们实际仅需要扩大边缘，因此我们只需要渲染背面，因为我们第二个pass就会盖在第一个pass的结果上，仅留下扩大的边缘。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//把法线转换到视图空间</span></span><br><span class="line"></span><br><span class="line">float3 vnormal = mul((float3x3)UNITY_MATRIX_IT_MV,v.normal);</span><br><span class="line"></span><br><span class="line"><span class="comment">//把法线转换到投影空间</span></span><br><span class="line"></span><br><span class="line">float2 pnormal_xy = mul((float2x2)UNITY_MATRIX_P,vnormal.<span class="built_in">xy</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//朝法线方向外扩</span></span><br><span class="line"></span><br><span class="line">o.vertex.<span class="built_in">xy</span> = o.vertex.<span class="built_in">xy</span> + pnormal_xy * _Outline;</span><br></pre></td></tr></table></figure>
+<p>整个代码实现：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">Shader <span class="string">"xjm/outline"</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//法线外扩实现描边</span></span><br><span class="line">	Properties</span><br><span class="line">	&#123;</span><br><span class="line">		_MainTex (<span class="string">"Texture"</span>, <span class="number">2</span>D) = <span class="string">"white"</span> &#123;&#125;</span><br><span class="line">		_Outline(<span class="string">"Outline"</span>,<span class="keyword">float</span>) = <span class="number">0.1</span></span><br><span class="line">		_OutlineColor(<span class="string">"OutlineColor"</span>,Color) = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Tags &#123; <span class="string">"RenderType"</span>=<span class="string">"Opaque"</span> &#125;</span><br><span class="line">		LOD <span class="number">100</span></span><br><span class="line">		<span class="comment">//描边阶段，法线外扩，渲染背面</span></span><br><span class="line">		Pass</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="comment">//只需要边缘外扩</span></span><br><span class="line">			Cull Front</span><br><span class="line">			ZWrite Off</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line">			<span class="keyword">struct</span> appdata</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float3 normal : NORMAL;</span><br><span class="line">			&#125;;</span><br><span class="line">			<span class="keyword">struct</span> v2f</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : SV_POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line">			<span class="keyword">float</span> _Outline;</span><br><span class="line">			float4 _OutlineColor;			</span><br><span class="line">			<span class="function">v2f <span class="title">vert</span> (<span class="params">appdata v</span>)</span></span><br><span class="line"><span class="function">			</span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.vertex = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				<span class="comment">//把法线转换到视图空间</span></span><br><span class="line">				float3 vnormal = mul((float3x3)UNITY_MATRIX_IT_MV,v.normal);</span><br><span class="line">				<span class="comment">//把法线转换到投影空间</span></span><br><span class="line">				float2 pnormal_xy = mul((float2x2)UNITY_MATRIX_P,vnormal.xy);</span><br><span class="line">				<span class="comment">//朝法线方向外扩</span></span><br><span class="line">				o.vertex.xy = o.vertex.xy + pnormal_xy * _Outline;</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span> (<span class="params">v2f i</span>) : SV_Target</span></span><br><span class="line"><span class="function">			</span>&#123;</span><br><span class="line">				<span class="keyword">return</span> _OutlineColor;</span><br><span class="line">			&#125;</span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//正常阶段</span></span><br><span class="line">		Pass</span><br><span class="line">		&#123;</span><br><span class="line">			</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag</span></span><br><span class="line">			<span class="keyword">struct</span> appdata</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">				float2 uv :TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line">			<span class="keyword">struct</span> v2f</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : SV_POSITION;</span><br><span class="line">				float2 uv:TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line">			sampler2D _MainTex;		</span><br><span class="line">			<span class="function">v2f <span class="title">vert</span> (<span class="params">appdata v</span>)</span></span><br><span class="line"><span class="function">			</span>&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.vertex = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				o.uv = v.uv;</span><br><span class="line">				<span class="keyword">return</span> o;</span><br><span class="line">			&#125;	</span><br><span class="line">			<span class="function">fixed4 <span class="title">frag</span> (<span class="params">v2f i</span>) : SV_Target</span></span><br><span class="line"><span class="function">			</span>&#123;</span><br><span class="line">				<span class="keyword">return</span> tex2D(_MainTex,i.uv);</span><br><span class="line">			&#125;</span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实现的效果：</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180807/K9eAAJ47AD.png?imageslim" witdh="50%"></p>
+<p>可以看得出，除了边缘有被描边之外，里面（模型的前面）也有描边的线条。如何去掉内部的线条呢？可以在第一个pass里关闭深度写入，关闭了深度写入之后，第二个pass就会完全盖住这个模型（除了外扩部分）</p>
+<p>&lt;img src=”<a href="http://pd1fsftip.bkt.clouddn.com/blog/180808/3I3H762igi.png?imageslim" target="_blank" rel="noopener">http://pd1fsftip.bkt.clouddn.com/blog/180808/3I3H762igi.png?imageslim</a> witdh = “50%”/&gt;</p>
+<p>但是你再看看在Game视图下描边不起作用了！</p>
+<p>看看FrameDebuger:</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180808/1aACfklgc4.png?imageslim" alt="mark"></p>
+<p>看到Unity在渲染完模型之后，再渲染了天空盒，因为描边pass没有写入深度，所以被天空盒覆盖了。</p>
+<p>注：Unity的geometry类型的渲染顺序是从前往后的，而Transparent类型是从后往前的。天空盒的渲染顺序位于geometry之后，Transparent之前。因此我们把描边pass放在Transparent的渲染顺序就不会被geometry类型遮挡了。</p>
+<p>因此把渲染队列改成Transparent就可以了。</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180808/4983FJK5Ki.png?imageslim" alt="mark"></p>
+<h2 id="后处理实现描边效果"><a href="#后处理实现描边效果" class="headerlink" title="后处理实现描边效果"></a>后处理实现描边效果</h2><p>​    法线外扩的方法有一个缺点，就是当模型边缘比较菱角分明的时候，法线外扩后会出现不连续的现象。因此我们还可以用后处理来实现描边或者外发光的效果。</p>
+<p>​    想象一下，我们要实现描边，按法线外扩的做法，是在渲染正常画面之前先渲染了一张比模型边缘扩大了一点点的纯色图片。再用正常的渲染模型盖住纯色模型，只让纯色图片的外扩的边缘显示出来。</p>
+<p>​    在后处理阶段要怎么处理呢？</p>
+<h3 id="处理流程"><a href="#处理流程" class="headerlink" title="处理流程"></a>处理流程</h3><ol>
+<li>我们可以在OnPreRender函数里先渲染一张纯色照片。OnPreRender函数在渲染之间执行。在正常渲染之间，我们先用一个纯色shader 替换要描边物体的shader，把渲染出来的纯色图片渲染到纹理上。</li>
+<li>怎么把这张纯色照片的边缘外扩的呢? 可以选择模糊的方法。高斯模糊的具体实现在这里就不多说了。我们模糊了之后的照片，边缘就会往外扩散。</li>
+<li>得到模糊的照片后，我们用模糊照片的颜色减去纯色照片的颜色，就会得到一个边缘照片。</li>
+<li><p>用正常渲染的图，叠加边缘图片就可以得到一个外发光或者描边的效果了。</p>
+<h3 id="2-1-普通后处理实现"><a href="#2-1-普通后处理实现" class="headerlink" title="2.1 普通后处理实现"></a>2.1 普通后处理实现</h3><pre><code>上面的4个流程中，在Unity5之前，我们可以额外增加一个摄像机，摄像机只渲染要描边的物体。而这个摄像机渲染到RenderTexture上。这个摄像机用来渲染纯色图片。
 
-        fixed4 frag (v2f i) : SV_Target
-        {
-            return _OutlineColor;
-        }
-        ENDCG
-    }
-    //正常阶段
-    Pass
-    {
-
-        CGPROGRAM
-        #pragma vertex vert
-        #pragma fragment frag
-        struct appdata
-        {
-            float4 vertex : POSITION;
-            float2 uv :TEXCOORD0;
-        };
-        struct v2f
-        {
-            float4 vertex : SV_POSITION;
-            float2 uv:TEXCOORD0;
-        };
-        sampler2D _MainTex;        
-        v2f vert (appdata v)
-        {
-            v2f o;
-            o.vertex = UnityObjectToClipPos(v.vertex);
-            o.uv = v.uv;
-            return o;
-        }    
-        fixed4 frag (v2f i) : SV_Target
-        {
-            return tex2D(_MainTex,i.uv);
-        }
-        ENDCG
-    }
-}
-</code></pre><p>}</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">实现的效果：</span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"http://pd1fsftip.bkt.clouddn.com/blog/180807/K9eAAJ47AD.png?imageslim"</span> <span class="attr">witdh</span> = <span class="string">"50%"</span>/&gt;</span></span></span><br><span class="line"></span><br><span class="line">可以看得出，除了边缘有被描边之外，里面（模型的前面）也有描边的线条。如何去掉内部的线条呢？可以在第一个pass里关闭深度写入，关闭了深度写入之后，第二个pass就会完全盖住这个模型（除了外扩部分）</span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"http://pd1fsftip.bkt.clouddn.com/blog/180808/3I3H762igi.png?imageslim witdh = "</span><span class="attr">50</span>%"/&gt;</span></span></span><br><span class="line"></span><br><span class="line">但是你再看看在Game视图下描边不起作用了！</span><br><span class="line"></span><br><span class="line">看看FrameDebuger:</span><br><span class="line"></span><br><span class="line">![<span class="string">mark</span>](<span class="link">http://pd1fsftip.bkt.clouddn.com/blog/180808/1aACfklgc4.png?imageslim</span>)</span><br><span class="line"></span><br><span class="line">看到Unity在渲染完模型之后，再渲染了天空盒，因为描边pass没有写入深度，所以被天空盒覆盖了。</span><br><span class="line"></span><br><span class="line">注：Unity的geometry类型的渲染顺序是从前往后的，而Transparent类型是从后往前的。天空盒的渲染顺序位于geometry之后，Transparent之前。因此我们把描边pass放在Transparent的渲染顺序就不会被geometry类型遮挡了。</span><br><span class="line"></span><br><span class="line">因此把渲染队列改成Transparent就可以了。</span><br><span class="line"></span><br><span class="line">![<span class="string">mark</span>](<span class="link">http://pd1fsftip.bkt.clouddn.com/blog/180808/4983FJK5Ki.png?imageslim</span>)</span><br><span class="line"></span><br><span class="line"><span class="section">## 后处理实现描边效果</span></span><br><span class="line"></span><br><span class="line">​	法线外扩的方法有一个缺点，就是当模型边缘比较菱角分明的时候，法线外扩后会出现不连续的现象。因此我们还可以用后处理来实现描边或者外发光的效果。</span><br><span class="line"></span><br><span class="line">​	想象一下，我们要实现描边，按法线外扩的做法，是在渲染正常画面之前先渲染了一张比模型边缘扩大了一点点的纯色图片。再用正常的渲染模型盖住纯色模型，只让纯色图片的外扩的边缘显示出来。</span><br><span class="line"></span><br><span class="line">​	在后处理阶段要怎么处理呢？</span><br><span class="line"></span><br><span class="line"><span class="section">### 处理流程</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">1. </span>我们可以在OnPreRender函数里先渲染一张纯色照片。OnPreRender函数在渲染之间执行。在正常渲染之间，我们先用一个纯色shader 替换要描边物体的shader，把渲染出来的纯色图片渲染到纹理上。</span><br><span class="line"><span class="bullet">2. </span>怎么把这张纯色照片的边缘外扩的呢? 可以选择模糊的方法。高斯模糊的具体实现在这里就不多说了。我们模糊了之后的照片，边缘就会往外扩散。</span><br><span class="line"><span class="bullet">3. </span>得到模糊的照片后，我们用模糊照片的颜色减去纯色照片的颜色，就会得到一个边缘照片。</span><br><span class="line"><span class="bullet">4. </span>用正常渲染的图，叠加边缘图片就可以得到一个外发光或者描边的效果了。</span><br><span class="line"></span><br><span class="line"><span class="code">	### 2.1 普通后处理实现</span></span><br><span class="line"></span><br><span class="line"><span class="code">		上面的4个流程中，在Unity5之前，我们可以额外增加一个摄像机，摄像机只渲染要描边的物体。而这个摄像机渲染到RenderTexture上。这个摄像机用来渲染纯色图片。</span></span><br><span class="line"><span class="code">	</span></span><br><span class="line"><span class="code">		仅渲染Player 层，创建一个RenderTexture</span></span><br></pre></td></tr></table></figure>
-<pre><code>m_outlineCamera.cullingMask = 1 &lt;&lt; LayerMask.NameToLayer(&quot;Player&quot;);
-int width = m_outlineCamera.pixelWidth &gt;&gt; m_downSampler;
-int height = m_outlineCamera.pixelHeight &gt;&gt; m_downSampler;
-m_renderTexture = RenderTexture.GetTemporary(width, height, 0);
-</code></pre><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">在渲染之间，用RenderWithShader函数替换<span class="built_in">shader</span>。这里的意思是在此刻，OutlineCamera摄像机下的所有物体都用outlineShader渲染。</span><br></pre></td></tr></table></figure>
-<p>  private void OnPreRender()<br>    {<br>        //先渲染到RT<br>        if (m_outlineCamera.enabled)<br>        {<br>            m_outlineCamera.targetTexture = m_renderTexture;<br>            m_outlineCamera.RenderWithShader(m_outlinePreShader, “”);//渲染了一张纯色RT<br>        }<br>    }</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">渲染完后，在OnRenderImage阶段：</span><br></pre></td></tr></table></figure>
-<p> private void OnRenderImage(RenderTexture source, RenderTexture destination)<br>    {<br>        int rtW = source.width &gt;&gt; m_downSampler;<br>        int rtH = source.height &gt;&gt; m_downSampler;<br>        var temp1 = RenderTexture.GetTemporary(rtW, rtH, 0);<br>        var temp2 = RenderTexture.GetTemporary(rtW, rtH, 0);<br>        // 先模糊纯色的图片<br>        Graphics.Blit(m_renderTexture, temp1);<br>        // 模糊迭代<br>        for (int i = 0; i &lt; blurIterator; ++i)<br>        {<br>            Graphics.Blit(temp1, temp2, outlineMaterial, 0);<br>            Graphics.Blit(temp2, temp1, outlineMaterial, 1);<br>        }<br>        if (hardSide)<br>        {<br>            outlineMaterial.EnableKeyword(“_Hard_Side”);<br>        }<br>        else<br>        {<br>            outlineMaterial.DisableKeyword(“_Hard_Side”);<br>        }</p>
-<pre><code>    outlineMaterial.SetTexture(&quot;_BlurTex&quot;, temp2);
-    outlineMaterial.SetTexture(&quot;_SrcTex&quot;, m_renderTexture);
-    outlineMaterial.SetColor(&quot;_OutlineColor&quot;, outlineColor);
-    Graphics.Blit(source, destination, outlineMaterial, 2);
-    RenderTexture.ReleaseTemporary(temp1);
-    RenderTexture.ReleaseTemporary(temp2);
-}
-</code></pre><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">来看看<span class="keyword">shader部分：</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="keyword"> </span>	纯色<span class="keyword">shader, </span>就返回一个边缘色就行了。非常简单</span><br></pre></td></tr></table></figure>
-<p>CGPROGRAM</p>
-<pre><code>#pragma vertex vert
-#pragma fragment frag
-
-float4 _OutlineColor;
-struct appdata
-{
-    float4 vertex : POSITION;
-};
-
-struct v2f
-{
-    float4 vertex : SV_POSITION;
-};
-
-
-v2f vert (appdata v)
-{
-    v2f o;
-    o.vertex = UnityObjectToClipPos(v.vertex);
-    return o;
-}
-
-fixed4 frag (v2f i) : SV_Target
-{
-    return _OutlineColor;
-}
-ENDCG
-</code></pre><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">​	描边<span class="string">shader:</span></span><br></pre></td></tr></table></figure>
-<p>/// Upgrade NOTE: replaced ‘mul(UNITY_MATRIX_MVP,<em>)’ with ‘UnityObjectToClipPos(</em>)’</p>
-<p>Shader “xjm/outline_postEffect”<br>{<br>    Properties<br>    {<br>        _MainTex (“Texture”, 2D) = “white” {}<br>        _BlurSize(“Blur Size”,float) = 1<br>        _BlurTex(“Blur Tex”,2D) = “”{}<br>        _SrcTex(“SrcTex”, 2D) = “white”{}<br>        _OutlineColor(“OutLine Color”,Color) = (1,1,1,1)<br>    }<br>    CGINCLUDE</p>
-<pre><code>#include &quot;UnityCG.cginc&quot;
-uniform half4 _MainTex_TexelSize;
-// 边缘分成了硬边和软边两种。
-#pragma shader_feature _Hard_Side 
-float _BlurSize;    
-sampler2D _MainTex;
-sampler2D _BlurTex;
-sampler2D _SrcTex;
-float4 _OutlineColor;
-// 高斯模糊部分 ---{
-//高斯模糊权重
-static const half4 GaussWeight[7] =
-{
-    half4(0.0205,0.0205,0.0205,0),
-    half4(0.0855,0.0855,0.0855,0),
-    half4(0.232,0.232,0.232,0),
-    half4(0.324,0.324,0.324,1),
-    half4(0.232,0.232,0.232,0),
-    half4(0.0855,0.0855,0.0855,0),
-    half4(0.0205,0.0205,0.0205,0)
-};
-
-
-struct v2f_Blur
-{
-    float4 pos:SV_POSITION;
-    half2 uv:TEXCOORD0;
-    half2 offset:TEXCOORD1;
-};
-// 水平方向的高斯模糊
-v2f_Blur vert_blur_Horizonal(appdata_img v)
-{
-    v2f_Blur o;
-    o.pos = UnityObjectToClipPos(v.vertex);
-    o.uv = v.texcoord;
-    o.offset = _MainTex_TexelSize.xy * half2(1,0)*_BlurSize;
-    return o;
-}
-// 垂直方向的高斯模糊
-v2f_Blur vert_blur_Vertical(appdata_img v)
-{
-    v2f_Blur o;
-    o.pos = UnityObjectToClipPos(v.vertex);
-    o.uv = v.texcoord;
-
-    o.offset = _MainTex_TexelSize.xy * half2(0,1)*_BlurSize;
-    return o;
-}
-half4 frag_blur(v2f_Blur i):COLOR
-{
-    half2 uv_withOffset = i.uv - i.offset * 3;
-    half4 color = 0;
-    for (int j = 0; j &lt; 7; ++j)
-    {
-        half4 texcol = tex2D(_MainTex,uv_withOffset);
-        color += texcol * GaussWeight[j];
-        uv_withOffset += i.offset;
-    }
-    return color;
-}
-// }--- 高斯模糊部分
-//add
-struct v2f_add
-{
-    float4 pos : SV_POSITION;
-    float2 uv  : TEXCOORD0;
-    float2 uv1 : TEXCOORD1;
-};
-v2f_add vert_add(appdata_img v)
-{
-    v2f_add o;
-    o.pos = UnityObjectToClipPos(v.vertex);
-    o.uv = v.texcoord;
-    o.uv1 = o.uv;
-</code></pre><p>#if UNITY_UV_STARTS_AT_TOP<br>            o.uv.y = 1- o.uv.y;</p>
-<p>#endif<br>        return o;<br>    }<br>    half4 frag_add(v2f_add i):COLOR<br>    {<br>        //获取屏幕<br>        fixed4 scene = tex2D(_MainTex, i.uv1);<br>        fixed4 blurCol = tex2D(_BlurTex,i.uv1);<br>        fixed4 srcCol = tex2D(_SrcTex,i.uv1);</p>
-<pre><code>    #if _Hard_Side 
-        // 如果是硬边描边，就用模糊纹理-原来的纹理得到边缘
-        fixed4 outlineColor = saturate(blurCol - srcCol);
-        // all(outlineColor.rgb) 三个分量都不等于0，返回1，否则返回0.类似&amp;&amp;运算
-        // any(outlineColor.rgb);rgb 任意不为 0，则返回 true。类似||运算
-        // 如果rgb都不为0(硬边部分）就显示硬边，否则都显示scene部分。
-        return scene * (1 - all(outlineColor.rgb))  +  _OutlineColor * any(outlineColor.rgb);
-    #else
-        return saturate(blurCol - srcCol) + scene;
-    #endif
-
-
-
-}
-
-//add
-ENDCG
-SubShader
-{
-
-    ZTest Always
-
-        ZWrite Off
-        Fog{ Mode Off }
-
-    //0
-    Pass 
-    {
-        ZTest Always
-        Cull Off
-        CGPROGRAM
-        #pragma vertex vert_blur_Horizonal
-        #pragma fragment frag_blur
-        ENDCG
-    }
-    //1
-    Pass
-    {
-        ZTest Always
-        Cull Off
-        CGPROGRAM
-        #pragma vertex vert_blur_Vertical
-        #pragma fragment frag_blur
-        ENDCG
-    }
-    //2
-    Pass
-    {
-        ZTest Off
-        Cull Off
-
-        CGPROGRAM
-        #pragma vertex vert_add
-        #pragma fragment frag_add
-        ENDCG
-    }
-
-}
-</code></pre><p>}</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">软边（外发光）：</span><br><span class="line"></span><br><span class="line">Pass0 和Pass1 分别是水平和垂直方向的模糊，在Pass 2 里进行相减。</span><br><span class="line"></span><br><span class="line">blurCol - srcCol 后的图像是这样子的</span><br><span class="line"></span><br><span class="line">![<span class="string">mark</span>](<span class="link">http://pd1fsftip.bkt.clouddn.com/blog/180809/KadKDhmCIa.png?imageslim</span>)</span><br><span class="line"></span><br><span class="line">再叠加正常图像，可以得到：</span><br><span class="line"></span><br><span class="line">得到外发光的描边。</span><br><span class="line"></span><br><span class="line">saturate(blurCol - srcCol) + scene;</span><br><span class="line"></span><br><span class="line">![<span class="string">mark</span>](<span class="link">http://pd1fsftip.bkt.clouddn.com/blog/180809/d6G2ec0D8d.png?imageslim</span>)	</span><br><span class="line"></span><br><span class="line">要实现硬边的效果，还在再处理一下，由上面那张相减之后的图片可以看到边缘是一个渐变的过程。边缘色越外越接近黑色RGB(0,0,0)。因此我们只选取RGB都大于0的部分像素就可以剔除渐变部分，只留下硬边部分。</span><br><span class="line"></span><br><span class="line"> saturate(blurCol - srcCol); 把结果限制为[0,1]，因为相减可能会导致负值，从而描边在模型内部染色。</span><br></pre></td></tr></table></figure>
-<p>// 如果是硬边描边，就用模糊纹理-原来的纹理得到边缘<br>            fixed4 outlineColor = saturate(blurCol - srcCol);<br>            // all(outlineColor.rgb) 三个分量都不等于0，返回1，否则返回0.类似&amp;&amp;运算<br>            // any(outlineColor.rgb);rgb 任意不为 0，则返回 true。类似||运算<br>            // 如果rgb都大于0(硬边部分）就显示硬边，否则都显示scene部分。<br>            return scene <em> (1 - all(outlineColor.rgb))  +  _OutlineColor </em> any(outlineColor.rgb);<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">结果：</span><br><span class="line"></span><br><span class="line">![<span class="string">mark</span>](<span class="link">http://pd1fsftip.bkt.clouddn.com/blog/180809/acc3Hb1dHH.png?imageslim</span>)</span><br><span class="line"></span><br><span class="line"><span class="section">### 2.2 Command Buffer 实现</span></span><br><span class="line"></span><br><span class="line">​	除了用额外的摄像机之外，在Unity5 还可以用Command Buffer来实现，代码会更简单。</span><br><span class="line"></span><br><span class="line">因为Command Buffer 可以在RenderImage 里执行。所以可以在初始化的时候，设置Command Buffer的renderTexture，设置要描边物体的shader。然后在后处理的时候再执行这个Command。就可以得到纯色图像了。</span><br><span class="line"></span><br><span class="line">​	初始化部分：</span><br></pre></td></tr></table></figure></p>
-<p>m_commandBuffer = new CommandBuffer();<br>        if (m_renderTexture == null)<br>            m_renderTexture = RenderTexture.GetTemporary(Screen.width &gt;&gt; m_downSampler, Screen.height &gt;&gt; m_downSampler, 0);<br>        m_commandBuffer.SetRenderTarget(m_renderTexture);<br>        m_commandBuffer.ClearRenderTarget(true, true, Color.black);<br>        foreach (var renderer in Renderers)<br>        {<br>            m_commandBuffer.DrawRenderer(renderer, outlinePreMaterial)<br>        }<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">​	在后处理阶段：</span><br></pre></td></tr></table></figure></p>
-<p> int rtW = source.width &gt;&gt; m_downSampler;<br>        int rtH = source.height &gt;&gt; m_downSampler;</p>
-<pre><code>    // 插入commandbuffer，绘制出纯色的图片
-    m_outlinePreMat.SetColor(&quot;_OutlineColor&quot;, outlineColor);
-    Graphics.ExecuteCommandBuffer(m_commandBuffer);
-    var temp1 = RenderTexture.GetTemporary(rtW, rtH, 16);
-    var temp2 = RenderTexture.GetTemporary(rtW, rtH, 16);
-    Graphics.Blit(m_renderTexture, temp1, outlineMaterial, 0);
-    Graphics.Blit(temp1, temp2, outlineMaterial, 1);
-    for (int i = 0; i &lt; blurIterator; ++i)
-    {
-        Graphics.Blit(temp2, temp1, outlineMaterial, 0);
-        Graphics.Blit(temp1, temp2, outlineMaterial, 1);
-    }
-    if (onlyShowBlur)
-    {
-        Graphics.Blit(temp2, destination);
-        RenderTexture.ReleaseTemporary(temp1);
-        RenderTexture.ReleaseTemporary(temp2);
-        return;
-    }
-    //add
-    //把模糊的边框加到原来的照片中
-    if (hardSide)
-    {
-        outlineMaterial.EnableKeyword(&quot;_Hard_Side&quot;);
-        outlineMaterial.SetColor(&quot;_OutlineColor&quot;, outlineColor);
-    }
-    else
-    {
-        outlineMaterial.DisableKeyword(&quot;_Hard_Side&quot;);
-    }
-    outlineMaterial.SetTexture(&quot;_BlurTex&quot;, temp2);
-    outlineMaterial.SetTexture(&quot;_SrcTex&quot;, m_renderTexture);
-    outlineMaterial.SetFloat(&quot;_BlurSize&quot;, blurSize);
-    Graphics.Blit(source, destination, outlineMaterial, 2);
-    RenderTexture.ReleaseTemporary(temp1);
-    RenderTexture.ReleaseTemporary(temp2);
-}
-</code></pre><p><code>`</code></p>
+仅渲染Player 层，创建一个RenderTexture
+</code></pre></li>
+</ol>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">m_outlineCamera.cullingMask = <span class="number">1</span> &lt;&lt; LayerMask.NameToLayer(<span class="string">"Player"</span>);</span><br><span class="line"><span class="keyword">int</span> <span class="built_in">width</span> = m_outlineCamera.pixelWidth &gt;&gt; m_downSampler;</span><br><span class="line"><span class="keyword">int</span> <span class="built_in">height</span> = m_outlineCamera.pixelHeight &gt;&gt; m_downSampler;</span><br><span class="line">m_renderTexture = RenderTexture.GetTemporary(<span class="built_in">width</span>, <span class="built_in">height</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>在渲染之间，用RenderWithShader函数替换shader。这里的意思是在此刻，OutlineCamera摄像机下的所有物体都用outlineShader渲染。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnPreRender</span><span class="params">()</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">      <span class="comment">//先渲染到RT</span></span><br><span class="line">      <span class="keyword">if</span> (m_outlineCamera.enabled)</span><br><span class="line">      &#123;</span><br><span class="line">          m_outlineCamera.targetTexture = m_renderTexture;</span><br><span class="line">          m_outlineCamera.RenderWithShader(m_outlinePreShader, <span class="string">""</span>);<span class="comment">//渲染了一张纯色RT</span></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>渲染完后，在OnRenderImage阶段：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> OnRenderImage(RenderTexture <span class="keyword">source</span>, RenderTexture destination)</span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">int</span> rtW = <span class="keyword">source</span>.width &gt;&gt; m_downSampler;</span><br><span class="line">       <span class="keyword">int</span> rtH = <span class="keyword">source</span>.height &gt;&gt; m_downSampler;</span><br><span class="line">       var temp1 = RenderTexture.GetTemporary(rtW, rtH, <span class="number">0</span>);</span><br><span class="line">       var temp2 = RenderTexture.GetTemporary(rtW, rtH, <span class="number">0</span>);</span><br><span class="line">       <span class="comment">// 先模糊纯色的图片</span></span><br><span class="line">       Graphics.Blit(m_renderTexture, temp1);</span><br><span class="line">       <span class="comment">// 模糊迭代</span></span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; blurIterator; ++i)</span><br><span class="line">       &#123;</span><br><span class="line">           Graphics.Blit(temp1, temp2, outlineMaterial, <span class="number">0</span>);</span><br><span class="line">           Graphics.Blit(temp2, temp1, outlineMaterial, <span class="number">1</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (hardSide)</span><br><span class="line">       &#123;</span><br><span class="line">           outlineMaterial.EnableKeyword(<span class="string">"_Hard_Side"</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">else</span></span><br><span class="line">       &#123;</span><br><span class="line">           outlineMaterial.DisableKeyword(<span class="string">"_Hard_Side"</span>);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       outlineMaterial.SetTexture(<span class="string">"_BlurTex"</span>, temp2);</span><br><span class="line">       outlineMaterial.SetTexture(<span class="string">"_SrcTex"</span>, m_renderTexture);</span><br><span class="line">       outlineMaterial.SetColor(<span class="string">"_OutlineColor"</span>, outlineColor);</span><br><span class="line">       Graphics.Blit(<span class="keyword">source</span>, destination, outlineMaterial, <span class="number">2</span>);</span><br><span class="line">       RenderTexture.ReleaseTemporary(temp1);</span><br><span class="line">       RenderTexture.ReleaseTemporary(temp2);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>来看看shader部分：</p>
+<pre><code>纯色shader, 就返回一个边缘色就行了。非常简单
+</code></pre><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">CGPROGRAM</span><br><span class="line">		</span><br><span class="line">			<span class="comment">#pragma vertex vert</span></span><br><span class="line">			<span class="comment">#pragma fragment frag</span></span><br><span class="line"></span><br><span class="line">			float4 _OutlineColor<span class="comment">;</span></span><br><span class="line">			struct appdata</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : POSITION<span class="comment">;</span></span><br><span class="line">			&#125;<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">			struct v<span class="number">2f</span></span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : SV_POSITION<span class="comment">;</span></span><br><span class="line">			&#125;<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">			</span><br><span class="line">			v<span class="number">2f</span> vert (appdata v)</span><br><span class="line">			&#123;</span><br><span class="line">				v<span class="number">2f</span> o<span class="comment">;</span></span><br><span class="line">				o.vertex = UnityObjectToClipPos(v.vertex)<span class="comment">;</span></span><br><span class="line">				return o<span class="comment">;</span></span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			fixed4 frag (v<span class="number">2f</span> i) : SV_Target</span><br><span class="line">			&#123;</span><br><span class="line">				return _OutlineColor<span class="comment">;</span></span><br><span class="line">			&#125;</span><br><span class="line">			ENDCG</span><br></pre></td></tr></table></figure>
+<p>​    描边shader:</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Upgrade <span class="doctag">NOTE:</span> replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'</span></span><br><span class="line"></span><br><span class="line">Shader <span class="string">"xjm/outline_postEffect"</span></span><br><span class="line">&#123;</span><br><span class="line">	Properties</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="variable">_MainTex</span> (<span class="string">"Texture"</span>, <span class="number">2</span>D) = <span class="string">"white"</span> &#123;&#125;</span><br><span class="line">		<span class="variable">_BlurSize</span>(<span class="string">"Blur Size"</span>,float) = <span class="number">1</span></span><br><span class="line">		<span class="variable">_BlurTex</span>(<span class="string">"Blur Tex"</span>,<span class="number">2</span>D) = <span class="string">""</span>&#123;&#125;</span><br><span class="line">		<span class="variable">_SrcTex</span>(<span class="string">"SrcTex"</span>, <span class="number">2</span>D) = <span class="string">"white"</span>&#123;&#125;</span><br><span class="line">		<span class="variable">_OutlineColor</span>(<span class="string">"OutLine Color"</span>,Color) = (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	CGINCLUDE</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"UnityCG.cginc"</span></span></span><br><span class="line">	<span class="built_in">uniform</span> half4 <span class="variable">_MainTex_TexelSize</span>;</span><br><span class="line">	<span class="comment">// 边缘分成了硬边和软边两种。</span></span><br><span class="line">	<span class="meta">#<span class="meta-keyword">pragma</span> shader_feature _Hard_Side </span></span><br><span class="line">	float <span class="variable">_BlurSize</span>;	</span><br><span class="line">	sampler2D <span class="variable">_MainTex</span>;</span><br><span class="line">	sampler2D <span class="variable">_BlurTex</span>;</span><br><span class="line">	sampler2D <span class="variable">_SrcTex</span>;</span><br><span class="line">	float4 <span class="variable">_OutlineColor</span>;</span><br><span class="line">	<span class="comment">// 高斯模糊部分 ---&#123;</span></span><br><span class="line">	<span class="comment">//高斯模糊权重</span></span><br><span class="line">	static const half4 GaussWeight[<span class="number">7</span>] =</span><br><span class="line">	&#123;</span><br><span class="line">		half4(<span class="number">0.0205</span>,<span class="number">0.0205</span>,<span class="number">0.0205</span>,<span class="number">0</span>),</span><br><span class="line">		half4(<span class="number">0.0855</span>,<span class="number">0.0855</span>,<span class="number">0.0855</span>,<span class="number">0</span>),</span><br><span class="line">		half4(<span class="number">0.232</span>,<span class="number">0.232</span>,<span class="number">0.232</span>,<span class="number">0</span>),</span><br><span class="line">		half4(<span class="number">0.324</span>,<span class="number">0.324</span>,<span class="number">0.324</span>,<span class="number">1</span>),</span><br><span class="line">		half4(<span class="number">0.232</span>,<span class="number">0.232</span>,<span class="number">0.232</span>,<span class="number">0</span>),</span><br><span class="line">		half4(<span class="number">0.0855</span>,<span class="number">0.0855</span>,<span class="number">0.0855</span>,<span class="number">0</span>),</span><br><span class="line">		half4(<span class="number">0.0205</span>,<span class="number">0.0205</span>,<span class="number">0.0205</span>,<span class="number">0</span>)</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	struct v2f_Blur</span><br><span class="line">	&#123;</span><br><span class="line">		float4 pos:SV_POSITION;</span><br><span class="line">		half2 uv:TEXCOORD0;</span><br><span class="line">		half2 offset:TEXCOORD1;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="comment">// 水平方向的高斯模糊</span></span><br><span class="line">	v2f_Blur vert_blur_Horizonal(appdata_img v)</span><br><span class="line">	&#123;</span><br><span class="line">		v2f_Blur o;</span><br><span class="line">		o.pos = UnityObjectToClipPos(v.vertex);</span><br><span class="line">		o.uv = v.texcoord;</span><br><span class="line">		o.offset = <span class="variable">_MainTex_TexelSize</span>.xy * half2(<span class="number">1</span>,<span class="number">0</span>)*<span class="variable">_BlurSize</span>;</span><br><span class="line">		return o;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 垂直方向的高斯模糊</span></span><br><span class="line">	v2f_Blur vert_blur_Vertical(appdata_img v)</span><br><span class="line">	&#123;</span><br><span class="line">		v2f_Blur o;</span><br><span class="line">		o.pos = UnityObjectToClipPos(v.vertex);</span><br><span class="line">		o.uv = v.texcoord;</span><br><span class="line"></span><br><span class="line">		o.offset = <span class="variable">_MainTex_TexelSize</span>.xy * half2(<span class="number">0</span>,<span class="number">1</span>)*<span class="variable">_BlurSize</span>;</span><br><span class="line">		return o;</span><br><span class="line">	&#125;</span><br><span class="line">	half4 frag_blur(v2f_Blur i):COLOR</span><br><span class="line">	&#123;</span><br><span class="line">		half2 uv_withOffset = i.uv - i.offset * <span class="number">3</span>;</span><br><span class="line">		half4 color = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (int j = <span class="number">0</span>; j &lt; <span class="number">7</span>; ++j)</span><br><span class="line">		&#123;</span><br><span class="line">			half4 texcol = tex2D(<span class="variable">_MainTex</span>,uv_withOffset);</span><br><span class="line">			color += texcol * GaussWeight[j];</span><br><span class="line">			uv_withOffset += i.offset;</span><br><span class="line">		&#125;</span><br><span class="line">		return color;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// &#125;--- 高斯模糊部分</span></span><br><span class="line">	<span class="comment">//add</span></span><br><span class="line">	struct v2f_add</span><br><span class="line">	&#123;</span><br><span class="line">		float4 pos : SV_POSITION;</span><br><span class="line">		float2 uv  : TEXCOORD0;</span><br><span class="line">		float2 uv1 : TEXCOORD1;</span><br><span class="line">	&#125;;</span><br><span class="line">	v2f_add vert_add(appdata_img v)</span><br><span class="line">	&#123;</span><br><span class="line">		v2f_add o;</span><br><span class="line">		o.pos = UnityObjectToClipPos(v.vertex);</span><br><span class="line">		o.uv = v.texcoord;</span><br><span class="line">		o.uv1 = o.uv;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> UNITY_UV_STARTS_AT_TOP</span></span><br><span class="line">			o.uv.y = <span class="number">1</span>- o.uv.y;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>	</span></span><br><span class="line">		return o;</span><br><span class="line">	&#125;</span><br><span class="line">	half4 frag_add(v2f_add i):COLOR</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//获取屏幕</span></span><br><span class="line">		fixed4 scene = tex2D(<span class="variable">_MainTex</span>, i.uv1);</span><br><span class="line">		fixed4 blurCol = tex2D(<span class="variable">_BlurTex</span>,i.uv1);</span><br><span class="line">		fixed4 srcCol = tex2D(<span class="variable">_SrcTex</span>,i.uv1);</span><br><span class="line">		<span class="meta">#<span class="meta-keyword">if</span> _Hard_Side </span></span><br><span class="line">			<span class="comment">// 如果是硬边描边，就用模糊纹理-原来的纹理得到边缘</span></span><br><span class="line">			fixed4 outlineColor = saturate(blurCol - srcCol);</span><br><span class="line">			<span class="comment">// all(outlineColor.rgb) 三个分量都不等于0，返回1，否则返回0.类似&amp;&amp;运算</span></span><br><span class="line">			<span class="comment">// any(outlineColor.rgb);rgb 任意不为 0，则返回 true。类似||运算</span></span><br><span class="line">			<span class="comment">// 如果rgb都不为0(硬边部分）就显示硬边，否则都显示scene部分。</span></span><br><span class="line">			return scene * (<span class="number">1</span> - all(outlineColor.rgb))  +  <span class="variable">_OutlineColor</span> * any(outlineColor.rgb);</span><br><span class="line">		<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">			return saturate(blurCol - srcCol) + scene;</span><br><span class="line">		<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">		</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//add</span></span><br><span class="line">	ENDCG</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">	</span><br><span class="line">		ZTest Always</span><br><span class="line">			</span><br><span class="line">			ZWrite Off</span><br><span class="line">			<span class="built_in">Fog</span>&#123; Mode Off &#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">//0</span></span><br><span class="line">		Pass </span><br><span class="line">		&#123;</span><br><span class="line">			ZTest Always</span><br><span class="line">			Cull Off</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert_blur_Horizonal</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag_blur</span></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//1</span></span><br><span class="line">		Pass</span><br><span class="line">		&#123;</span><br><span class="line">			ZTest Always</span><br><span class="line">			Cull Off</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert_blur_Vertical</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag_blur</span></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//2</span></span><br><span class="line">		Pass</span><br><span class="line">		&#123;</span><br><span class="line">			ZTest Off</span><br><span class="line">			Cull Off</span><br><span class="line"> </span><br><span class="line">			CGPROGRAM</span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> vertex vert_add</span></span><br><span class="line">			<span class="meta">#<span class="meta-keyword">pragma</span> fragment frag_add</span></span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>软边（外发光）：</p>
+<p>Pass0 和Pass1 分别是水平和垂直方向的模糊，在Pass 2 里进行相减。</p>
+<p>blurCol - srcCol 后的图像是这样子的</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180809/KadKDhmCIa.png?imageslim" alt="mark"></p>
+<p>再叠加正常图像，可以得到：</p>
+<p>得到外发光的描边。</p>
+<p>saturate(blurCol - srcCol) + scene;</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180809/d6G2ec0D8d.png?imageslim" alt="mark">    </p>
+<p>要实现硬边的效果，还在再处理一下，由上面那张相减之后的图片可以看到边缘是一个渐变的过程。边缘色越外越接近黑色RGB(0,0,0)。因此我们只选取RGB都大于0的部分像素就可以剔除渐变部分，只留下硬边部分。</p>
+<p> saturate(blurCol - srcCol); 把结果限制为[0,1]，因为相减可能会导致负值，从而描边在模型内部染色。</p>
+<figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果是硬边描边，就用模糊纹理-原来的纹理得到边缘</span></span><br><span class="line">			fixed4 outlineColor = saturate(blurCol - srcCol);</span><br><span class="line">			<span class="comment">// all(outlineColor.rgb) 三个分量都不等于0，返回1，否则返回0.类似&amp;&amp;运算</span></span><br><span class="line">			<span class="comment">// any(outlineColor.rgb);rgb 任意不为 0，则返回 true。类似||运算</span></span><br><span class="line">			<span class="comment">// 如果rgb都大于0(硬边部分）就显示硬边，否则都显示scene部分。</span></span><br><span class="line">			<span class="keyword">return</span> scene * (<span class="number">1</span> - <span class="built_in">all</span>(outlineColor.rgb))  +  _OutlineColor * <span class="built_in">any</span>(outlineColor.rgb);</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180809/acc3Hb1dHH.png?imageslim" alt="mark"></p>
+<h3 id="2-2-Command-Buffer-实现"><a href="#2-2-Command-Buffer-实现" class="headerlink" title="2.2 Command Buffer 实现"></a>2.2 Command Buffer 实现</h3><p>​    除了用额外的摄像机之外，在Unity5 还可以用Command Buffer来实现，代码会更简单。</p>
+<p>因为Command Buffer 可以在RenderImage 里执行。所以可以在初始化的时候，设置Command Buffer的renderTexture，设置要描边物体的shader。然后在后处理的时候再执行这个Command。就可以得到纯色图像了。</p>
+<p>​    初始化部分：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">m_commandBuffer = <span class="keyword">new</span> CommandBuffer();</span><br><span class="line">        <span class="keyword">if</span> (m_renderTexture == <span class="literal">null</span>)</span><br><span class="line">            m_renderTexture = RenderTexture.GetTemporary(Screen.width &gt;&gt; m_downSampler, Screen.height &gt;&gt; m_downSampler, <span class="number">0</span>);</span><br><span class="line">        m_commandBuffer.SetRenderTarget(m_renderTexture);</span><br><span class="line">        m_commandBuffer.ClearRenderTarget(<span class="literal">true</span>, <span class="literal">true</span>, Color.black);</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">var</span> renderer <span class="keyword">in</span> Renderers)</span><br><span class="line">        &#123;</span><br><span class="line">            m_commandBuffer.DrawRenderer(renderer, outlinePreMaterial)</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>​    在后处理阶段：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> rtW = <span class="keyword">source</span>.width &gt;&gt; m_downSampler;</span><br><span class="line">       <span class="keyword">int</span> rtH = <span class="keyword">source</span>.height &gt;&gt; m_downSampler;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 插入commandbuffer，绘制出纯色的图片</span></span><br><span class="line">       m_outlinePreMat.SetColor(<span class="string">"_OutlineColor"</span>, outlineColor);</span><br><span class="line">       Graphics.ExecuteCommandBuffer(m_commandBuffer);</span><br><span class="line">       var temp1 = RenderTexture.GetTemporary(rtW, rtH, <span class="number">16</span>);</span><br><span class="line">       var temp2 = RenderTexture.GetTemporary(rtW, rtH, <span class="number">16</span>);</span><br><span class="line">       Graphics.Blit(m_renderTexture, temp1, outlineMaterial, <span class="number">0</span>);</span><br><span class="line">       Graphics.Blit(temp1, temp2, outlineMaterial, <span class="number">1</span>);</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; blurIterator; ++i)</span><br><span class="line">       &#123;</span><br><span class="line">           Graphics.Blit(temp2, temp1, outlineMaterial, <span class="number">0</span>);</span><br><span class="line">           Graphics.Blit(temp1, temp2, outlineMaterial, <span class="number">1</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (onlyShowBlur)</span><br><span class="line">       &#123;</span><br><span class="line">           Graphics.Blit(temp2, destination);</span><br><span class="line">           RenderTexture.ReleaseTemporary(temp1);</span><br><span class="line">           RenderTexture.ReleaseTemporary(temp2);</span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//add</span></span><br><span class="line">       <span class="comment">//把模糊的边框加到原来的照片中</span></span><br><span class="line">       <span class="keyword">if</span> (hardSide)</span><br><span class="line">       &#123;</span><br><span class="line">           outlineMaterial.EnableKeyword(<span class="string">"_Hard_Side"</span>);</span><br><span class="line">           outlineMaterial.SetColor(<span class="string">"_OutlineColor"</span>, outlineColor);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">else</span></span><br><span class="line">       &#123;</span><br><span class="line">           outlineMaterial.DisableKeyword(<span class="string">"_Hard_Side"</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       outlineMaterial.SetTexture(<span class="string">"_BlurTex"</span>, temp2);</span><br><span class="line">       outlineMaterial.SetTexture(<span class="string">"_SrcTex"</span>, m_renderTexture);</span><br><span class="line">       outlineMaterial.SetFloat(<span class="string">"_BlurSize"</span>, blurSize);</span><br><span class="line">       Graphics.Blit(<span class="keyword">source</span>, destination, outlineMaterial, <span class="number">2</span>);</span><br><span class="line">       RenderTexture.ReleaseTemporary(temp1);</span><br><span class="line">       RenderTexture.ReleaseTemporary(temp2);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 <p>​    不用额外增加camera，非常方便。</p>
 <p>​    </p>
 
