@@ -1,148 +1,370 @@
 <!DOCTYPE html>
-<html lang="en">
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Xujianming的博客">
-    <meta name="keyword"  content="游戏开发">
-    <link rel="shortcut icon" href="/img/favicon.ico">
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
 
-    <title>
-        
-        unity shader实例3：轮廓渲染-描边 - Xujianming的博客 | Xujianming&#39;s Blog
-        
-    </title>
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/aircloud.css">
-    <link rel="stylesheet" href="/css/gitment.css">
-    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
-    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
-    <!-- ga & ba script hoook -->
-    <script></script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="unity,shader," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文主要来讲几种描边的实现方法 1.法线外扩一般期望的描边效果，就是在模型外面有一圈选边，因此我们可以把模型扩大一点点，利用这个扩大的边缘来实现描边效果。可以看出，扩大的方向其实就是法线的方向，边缘的法线和视线夹角基本成90度。所以我们可以在第一个pass 朝法线方向扩大模型。要扩大模型，自然是在vertexshader阶段处理，我们实际仅需要扩大边缘，因此我们只需要渲染背面，因为我们第二个pas">
+<meta name="keywords" content="unity,shader">
+<meta property="og:type" content="article">
+<meta property="og:title" content="unity shader实例3：轮廓渲染-描边">
+<meta property="og:url" content="http://yoursite.com/2018/08/07/轮廓渲染-描边/index.html">
+<meta property="og:site_name" content="xjm&#39;s Blog">
+<meta property="og:description" content="本文主要来讲几种描边的实现方法 1.法线外扩一般期望的描边效果，就是在模型外面有一圈选边，因此我们可以把模型扩大一点点，利用这个扩大的边缘来实现描边效果。可以看出，扩大的方向其实就是法线的方向，边缘的法线和视线夹角基本成90度。所以我们可以在第一个pass 朝法线方向扩大模型。要扩大模型，自然是在vertexshader阶段处理，我们实际仅需要扩大边缘，因此我们只需要渲染背面，因为我们第二个pas">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180807/K9eAAJ47AD.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180808/3I3H762igi.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180808/1aACfklgc4.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180808/4983FJK5Ki.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180809/KadKDhmCIa.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180809/d6G2ec0D8d.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180809/acc3Hb1dHH.png?imageslim">
+<meta property="og:updated_time" content="2018-08-11T14:21:52.623Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="unity shader实例3：轮廓渲染-描边">
+<meta name="twitter:description" content="本文主要来讲几种描边的实现方法 1.法线外扩一般期望的描边效果，就是在模型外面有一圈选边，因此我们可以把模型扩大一点点，利用这个扩大的边缘来实现描边效果。可以看出，扩大的方向其实就是法线的方向，边缘的法线和视线夹角基本成90度。所以我们可以在第一个pass 朝法线方向扩大模型。要扩大模型，自然是在vertexshader阶段处理，我们实际仅需要扩大边缘，因此我们只需要渲染背面，因为我们第二个pas">
+<meta name="twitter:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180807/K9eAAJ47AD.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/07/轮廓渲染-描边/"/>
+
+
+
+
+
+  <title>unity shader实例3：轮廓渲染-描边 | xjm's Blog</title>
+  
+
+
+
+
+
+
+
+
 </head>
 
-<body>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-<div class="site-nav-toggle" id="site-nav-toggle">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xjm's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">游戏开发笔记自留地</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
     <button>
-        <span class="btn-bar"></span>
-        <span class="btn-bar"></span>
-        <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
     </button>
+  </div>
 </div>
 
-<div class="index-about">
-    <i> 游戏开发笔记自留地 </i>
-</div>
+<nav class="site-nav">
+  
 
-<div class="index-container">
-    
-    <div class="index-left">
+  
+    <ul id="menu" class="menu">
+      
         
-<div class="nav" id="nav">
-    <div class="avatar-name">
-        <div class="avatar">
-            <img src="/img/avatar.jpg" />
-        </div>
-        <div class="name">
-            <i>Xujianming</i>
-        </div>
-    </div>
-    <div class="contents" id="nav-content">
-        <ul>
-            <li >
-                <a href="/">
-                    <i class="iconfont icon-shouye1"></i>
-                    <span>主页</span>
-                </a>
-            </li>
-            <li >
-                <a href="/tags">
-                    <i class="iconfont icon-biaoqian1"></i>
-                    <span>标签</span>
-                </a>
-            </li>
-            <li >
-                <a href="/archive">
-                    <i class="iconfont icon-guidang2"></i>
-                    <span>存档</span>
-                </a>
-            </li>
-            <li >
-                <a href="/about/">
-                    <i class="iconfont icon-guanyu2"></i>
-                    <span>关于</span>
-                </a>
-            </li>
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
             
-            <li>
-                <a id="search">
-                    <i class="iconfont icon-sousuo1"></i>
-                    <span>搜索</span>
-                </a>
-            </li>
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-        </ul>
-    </div>
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
     
-        <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-法线外扩"><span class="toc-text">1.法线外扩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后处理实现描边效果"><span class="toc-text">后处理实现描边效果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#处理流程"><span class="toc-text">处理流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-普通后处理实现"><span class="toc-text">2.1 普通后处理实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Command-Buffer-实现"><span class="toc-text">2.2 Command Buffer 实现</span></a></li></ol></li></ol>
-</div>
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/07/轮廓渲染-描边/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Xujianming">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xjm's Blog">
+    </span>
+
     
-</div>
+      <header class="post-header">
 
+        
+        
+          <h1 class="post-title" itemprop="name headline">unity shader实例3：轮廓渲染-描边</h1>
+        
 
-<div class="search-field" id="search-field">
-    <div class="search-container">
-        <div class="search-input">
-            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
-            <input id="search-input"/>
-            <span id="begin-search">搜索</span>
-        </div>
-        <div class="search-result-container" id="search-result-container">
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-07T00:39:47+08:00">
+                2018-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/unity-shader/" itemprop="url" rel="index">
+                    <span itemprop="name">unity shader</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/08/07/轮廓渲染-描边/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/08/07/轮廓渲染-描边/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv">本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
 
         </div>
-    </div>
-</div>
-        <div class="index-about-mobile">
-            <i> 游戏开发笔记自留地 </i>
-        </div>
-    </div>
+      </header>
     
-    <div class="index-middle">
-        <!-- Main Content -->
-        
 
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
-<div class="post-container">
-    <div class="post-title">
-        unity shader实例3：轮廓渲染-描边
-    </div>
+      
+      
 
-    <div class="post-meta">
-        <span class="attr">发布于：<span>2018-08-07 00:39:47</span></span>
-        
-        <span class="attr">标签：/
-        
-        <a class="tag" href="/tags/#unity" title="unity">unity</a>
-        <span>/</span>
-        
-        <a class="tag" href="/tags/#shader" title="shader">shader</a>
-        <span>/</span>
-        
-        <a class="tag" href="/tags/#描边" title="描边">描边</a>
-        <span>/</span>
-        
-        
-        </span>
-        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
-</span>
-</span>
-    </div>
-    <div class="post-content ">
+      
         <p>本文主要来讲几种描边的实现方法</p>
 <h2 id="1-法线外扩"><a href="#1-法线外扩" class="headerlink" title="1.法线外扩"></a>1.法线外扩</h2><p>一般期望的描边效果，就是在模型外面有一圈选边，因此我们可以把模型扩大一点点，利用这个扩大的边缘来实现描边效果。可以看出，扩大的方向其实就是法线的方向，边缘的法线和视线夹角基本成90度。所以我们可以在第一个pass 朝法线方向扩大模型。<br>要扩大模型，自然是在vertexshader阶段处理，我们实际仅需要扩大边缘，因此我们只需要渲染背面，因为我们第二个pass就会盖在第一个pass的结果上，仅留下扩大的边缘。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//把法线转换到视图空间</span><br><span class="line"></span><br><span class="line">float3 vnormal = mul((float3x3)UNITY_MATRIX_IT_MV,v.normal);</span><br><span class="line"></span><br><span class="line">//把法线转换到投影空间</span><br><span class="line"></span><br><span class="line">float2 pnormal_xy = mul((float2x2)UNITY_MATRIX_P,vnormal.xy);</span><br><span class="line"></span><br><span class="line">//朝法线方向外扩</span><br><span class="line"></span><br><span class="line">o.vertex.xy = o.vertex.xy + pnormal_xy * _Outline;</span><br></pre></td></tr></table></figure>
@@ -151,7 +373,7 @@
 <p>实现的效果：</p>
 <p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180807/K9eAAJ47AD.png?imageslim" witdh="50%"></p>
 <p>可以看得出，除了边缘有被描边之外，里面（模型的前面）也有描边的线条。如何去掉内部的线条呢？可以在第一个pass里关闭深度写入，关闭了深度写入之后，第二个pass就会完全盖住这个模型（除了外扩部分）</p>
-<p>&lt;img src=”<a href="http://pd1fsftip.bkt.clouddn.com/blog/180808/3I3H762igi.png?imageslim" target="_blank" rel="noopener">http://pd1fsftip.bkt.clouddn.com/blog/180808/3I3H762igi.png?imageslim</a> witdh = “50%”/&gt;</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180808/3I3H762igi.png?imageslim" witdh="50%"></p>
 <p>但是你再看看在Game视图下描边不起作用了！</p>
 <p>看看FrameDebuger:</p>
 <p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180808/1aACfklgc4.png?imageslim" alt="mark"></p>
@@ -167,19 +389,16 @@
 <li>怎么把这张纯色照片的边缘外扩的呢? 可以选择模糊的方法。高斯模糊的具体实现在这里就不多说了。我们模糊了之后的照片，边缘就会往外扩散。</li>
 <li>得到模糊的照片后，我们用模糊照片的颜色减去纯色照片的颜色，就会得到一个边缘照片。</li>
 <li><p>用正常渲染的图，叠加边缘图片就可以得到一个外发光或者描边的效果了。</p>
-<h3 id="2-1-普通后处理实现"><a href="#2-1-普通后处理实现" class="headerlink" title="2.1 普通后处理实现"></a>2.1 普通后处理实现</h3><pre><code>上面的4个流程中，在Unity5之前，我们可以额外增加一个摄像机，摄像机只渲染要描边的物体。而这个摄像机渲染到RenderTexture上。这个摄像机用来渲染纯色图片。
-
-仅渲染Player 层，创建一个RenderTexture
-</code></pre></li>
+<h3 id="2-1-普通后处理实现"><a href="#2-1-普通后处理实现" class="headerlink" title="2.1 普通后处理实现"></a>2.1 普通后处理实现</h3></li>
 </ol>
+<p>上面的4个流程中，在Unity5之前，我们可以额外增加一个摄像机，摄像机只渲染要描边的物体。而这个摄像机渲染到RenderTexture上。这个摄像机用来渲染纯色图片。<br>仅渲染Player 层，创建一个RenderTexture</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">m_outlineCamera.cullingMask = 1 &lt;&lt; LayerMask.NameToLayer(&quot;Player&quot;);</span><br><span class="line">int width = m_outlineCamera.pixelWidth &gt;&gt; m_downSampler;</span><br><span class="line">int height = m_outlineCamera.pixelHeight &gt;&gt; m_downSampler;</span><br><span class="line">m_renderTexture = RenderTexture.GetTemporary(width, height, 0);</span><br></pre></td></tr></table></figure>
 <p>在渲染之间，用RenderWithShader函数替换shader。这里的意思是在此刻，OutlineCamera摄像机下的所有物体都用outlineShader渲染。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private void OnPreRender()</span><br><span class="line">  &#123;</span><br><span class="line">      //先渲染到RT</span><br><span class="line">      if (m_outlineCamera.enabled)</span><br><span class="line">      &#123;</span><br><span class="line">          m_outlineCamera.targetTexture = m_renderTexture;</span><br><span class="line">          m_outlineCamera.RenderWithShader(m_outlinePreShader, &quot;&quot;);//渲染了一张纯色RT</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 <p>渲染完后，在OnRenderImage阶段：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">private void OnRenderImage(RenderTexture source, RenderTexture destination)</span><br><span class="line">   &#123;</span><br><span class="line">       int rtW = source.width &gt;&gt; m_downSampler;</span><br><span class="line">       int rtH = source.height &gt;&gt; m_downSampler;</span><br><span class="line">       var temp1 = RenderTexture.GetTemporary(rtW, rtH, 0);</span><br><span class="line">       var temp2 = RenderTexture.GetTemporary(rtW, rtH, 0);</span><br><span class="line">       // 先模糊纯色的图片</span><br><span class="line">       Graphics.Blit(m_renderTexture, temp1);</span><br><span class="line">       // 模糊迭代</span><br><span class="line">       for (int i = 0; i &lt; blurIterator; ++i)</span><br><span class="line">       &#123;</span><br><span class="line">           Graphics.Blit(temp1, temp2, outlineMaterial, 0);</span><br><span class="line">           Graphics.Blit(temp2, temp1, outlineMaterial, 1);</span><br><span class="line">       &#125;</span><br><span class="line">       if (hardSide)</span><br><span class="line">       &#123;</span><br><span class="line">           outlineMaterial.EnableKeyword(&quot;_Hard_Side&quot;);</span><br><span class="line">       &#125;</span><br><span class="line">       else</span><br><span class="line">       &#123;</span><br><span class="line">           outlineMaterial.DisableKeyword(&quot;_Hard_Side&quot;);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       outlineMaterial.SetTexture(&quot;_BlurTex&quot;, temp2);</span><br><span class="line">       outlineMaterial.SetTexture(&quot;_SrcTex&quot;, m_renderTexture);</span><br><span class="line">       outlineMaterial.SetColor(&quot;_OutlineColor&quot;, outlineColor);</span><br><span class="line">       Graphics.Blit(source, destination, outlineMaterial, 2);</span><br><span class="line">       RenderTexture.ReleaseTemporary(temp1);</span><br><span class="line">       RenderTexture.ReleaseTemporary(temp2);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-<p>来看看shader部分：</p>
-<pre><code>纯色shader, 就返回一个边缘色就行了。非常简单
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">CGPROGRAM</span><br><span class="line">		</span><br><span class="line">			#pragma vertex vert</span><br><span class="line">			#pragma fragment frag</span><br><span class="line"></span><br><span class="line">			float4 _OutlineColor;</span><br><span class="line">			struct appdata</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			struct v2f</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : SV_POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			</span><br><span class="line">			v2f vert (appdata v)</span><br><span class="line">			&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.vertex = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				return o;</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			fixed4 frag (v2f i) : SV_Target</span><br><span class="line">			&#123;</span><br><span class="line">				return _OutlineColor;</span><br><span class="line">			&#125;</span><br><span class="line">			ENDCG</span><br></pre></td></tr></table></figure>
+<p>来看看shader部分,纯色shader, 就返回一个边缘色就行了。非常简单:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">CGPROGRAM</span><br><span class="line">		</span><br><span class="line">			#pragma vertex vert</span><br><span class="line">			#pragma fragment frag</span><br><span class="line"></span><br><span class="line">			float4 _OutlineColor;</span><br><span class="line">			struct appdata</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			struct v2f</span><br><span class="line">			&#123;</span><br><span class="line">				float4 vertex : SV_POSITION;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			</span><br><span class="line">			v2f vert (appdata v)</span><br><span class="line">			&#123;</span><br><span class="line">				v2f o;</span><br><span class="line">				o.vertex = UnityObjectToClipPos(v.vertex);</span><br><span class="line">				return o;</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			fixed4 frag (v2f i) : SV_Target</span><br><span class="line">			&#123;</span><br><span class="line">				return _OutlineColor;</span><br><span class="line">			&#125;</span><br><span class="line">			ENDCG</span><br></pre></td></tr></table></figure>
 <p>​    描边shader:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line">/// Upgrade NOTE: replaced &apos;mul(UNITY_MATRIX_MVP,*)&apos; with &apos;UnityObjectToClipPos(*)&apos;</span><br><span class="line"></span><br><span class="line">Shader &quot;xjm/outline_postEffect&quot;</span><br><span class="line">&#123;</span><br><span class="line">	Properties</span><br><span class="line">	&#123;</span><br><span class="line">		_MainTex (&quot;Texture&quot;, 2D) = &quot;white&quot; &#123;&#125;</span><br><span class="line">		_BlurSize(&quot;Blur Size&quot;,float) = 1</span><br><span class="line">		_BlurTex(&quot;Blur Tex&quot;,2D) = &quot;&quot;&#123;&#125;</span><br><span class="line">		_SrcTex(&quot;SrcTex&quot;, 2D) = &quot;white&quot;&#123;&#125;</span><br><span class="line">		_OutlineColor(&quot;OutLine Color&quot;,Color) = (1,1,1,1)</span><br><span class="line">	&#125;</span><br><span class="line">	CGINCLUDE</span><br><span class="line">	#include &quot;UnityCG.cginc&quot;</span><br><span class="line">	uniform half4 _MainTex_TexelSize;</span><br><span class="line">	// 边缘分成了硬边和软边两种。</span><br><span class="line">	#pragma shader_feature _Hard_Side </span><br><span class="line">	float _BlurSize;	</span><br><span class="line">	sampler2D _MainTex;</span><br><span class="line">	sampler2D _BlurTex;</span><br><span class="line">	sampler2D _SrcTex;</span><br><span class="line">	float4 _OutlineColor;</span><br><span class="line">	// 高斯模糊部分 ---&#123;</span><br><span class="line">	//高斯模糊权重</span><br><span class="line">	static const half4 GaussWeight[7] =</span><br><span class="line">	&#123;</span><br><span class="line">		half4(0.0205,0.0205,0.0205,0),</span><br><span class="line">		half4(0.0855,0.0855,0.0855,0),</span><br><span class="line">		half4(0.232,0.232,0.232,0),</span><br><span class="line">		half4(0.324,0.324,0.324,1),</span><br><span class="line">		half4(0.232,0.232,0.232,0),</span><br><span class="line">		half4(0.0855,0.0855,0.0855,0),</span><br><span class="line">		half4(0.0205,0.0205,0.0205,0)</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	struct v2f_Blur</span><br><span class="line">	&#123;</span><br><span class="line">		float4 pos:SV_POSITION;</span><br><span class="line">		half2 uv:TEXCOORD0;</span><br><span class="line">		half2 offset:TEXCOORD1;</span><br><span class="line">	&#125;;</span><br><span class="line">	// 水平方向的高斯模糊</span><br><span class="line">	v2f_Blur vert_blur_Horizonal(appdata_img v)</span><br><span class="line">	&#123;</span><br><span class="line">		v2f_Blur o;</span><br><span class="line">		o.pos = UnityObjectToClipPos(v.vertex);</span><br><span class="line">		o.uv = v.texcoord;</span><br><span class="line">		o.offset = _MainTex_TexelSize.xy * half2(1,0)*_BlurSize;</span><br><span class="line">		return o;</span><br><span class="line">	&#125;</span><br><span class="line">	// 垂直方向的高斯模糊</span><br><span class="line">	v2f_Blur vert_blur_Vertical(appdata_img v)</span><br><span class="line">	&#123;</span><br><span class="line">		v2f_Blur o;</span><br><span class="line">		o.pos = UnityObjectToClipPos(v.vertex);</span><br><span class="line">		o.uv = v.texcoord;</span><br><span class="line"></span><br><span class="line">		o.offset = _MainTex_TexelSize.xy * half2(0,1)*_BlurSize;</span><br><span class="line">		return o;</span><br><span class="line">	&#125;</span><br><span class="line">	half4 frag_blur(v2f_Blur i):COLOR</span><br><span class="line">	&#123;</span><br><span class="line">		half2 uv_withOffset = i.uv - i.offset * 3;</span><br><span class="line">		half4 color = 0;</span><br><span class="line">		for (int j = 0; j &lt; 7; ++j)</span><br><span class="line">		&#123;</span><br><span class="line">			half4 texcol = tex2D(_MainTex,uv_withOffset);</span><br><span class="line">			color += texcol * GaussWeight[j];</span><br><span class="line">			uv_withOffset += i.offset;</span><br><span class="line">		&#125;</span><br><span class="line">		return color;</span><br><span class="line">	&#125;</span><br><span class="line">	// &#125;--- 高斯模糊部分</span><br><span class="line">	//add</span><br><span class="line">	struct v2f_add</span><br><span class="line">	&#123;</span><br><span class="line">		float4 pos : SV_POSITION;</span><br><span class="line">		float2 uv  : TEXCOORD0;</span><br><span class="line">		float2 uv1 : TEXCOORD1;</span><br><span class="line">	&#125;;</span><br><span class="line">	v2f_add vert_add(appdata_img v)</span><br><span class="line">	&#123;</span><br><span class="line">		v2f_add o;</span><br><span class="line">		o.pos = UnityObjectToClipPos(v.vertex);</span><br><span class="line">		o.uv = v.texcoord;</span><br><span class="line">		o.uv1 = o.uv;</span><br><span class="line">#if UNITY_UV_STARTS_AT_TOP</span><br><span class="line">			o.uv.y = 1- o.uv.y;</span><br><span class="line">#endif	</span><br><span class="line">		return o;</span><br><span class="line">	&#125;</span><br><span class="line">	half4 frag_add(v2f_add i):COLOR</span><br><span class="line">	&#123;</span><br><span class="line">		//获取屏幕</span><br><span class="line">		fixed4 scene = tex2D(_MainTex, i.uv1);</span><br><span class="line">		fixed4 blurCol = tex2D(_BlurTex,i.uv1);</span><br><span class="line">		fixed4 srcCol = tex2D(_SrcTex,i.uv1);</span><br><span class="line">		#if _Hard_Side </span><br><span class="line">			// 如果是硬边描边，就用模糊纹理-原来的纹理得到边缘</span><br><span class="line">			fixed4 outlineColor = saturate(blurCol - srcCol);</span><br><span class="line">			// all(outlineColor.rgb) 三个分量都不等于0，返回1，否则返回0.类似&amp;&amp;运算</span><br><span class="line">			// any(outlineColor.rgb);rgb 任意不为 0，则返回 true。类似||运算</span><br><span class="line">			// 如果rgb都不为0(硬边部分）就显示硬边，否则都显示scene部分。</span><br><span class="line">			return scene * (1 - all(outlineColor.rgb))  +  _OutlineColor * any(outlineColor.rgb);</span><br><span class="line">		#else</span><br><span class="line">			return saturate(blurCol - srcCol) + scene;</span><br><span class="line">		#endif</span><br><span class="line">		</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//add</span><br><span class="line">	ENDCG</span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">	</span><br><span class="line">		ZTest Always</span><br><span class="line">			</span><br><span class="line">			ZWrite Off</span><br><span class="line">			Fog&#123; Mode Off &#125;</span><br><span class="line"></span><br><span class="line">		//0</span><br><span class="line">		Pass </span><br><span class="line">		&#123;</span><br><span class="line">			ZTest Always</span><br><span class="line">			Cull Off</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			#pragma vertex vert_blur_Horizonal</span><br><span class="line">			#pragma fragment frag_blur</span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">		//1</span><br><span class="line">		Pass</span><br><span class="line">		&#123;</span><br><span class="line">			ZTest Always</span><br><span class="line">			Cull Off</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			#pragma vertex vert_blur_Vertical</span><br><span class="line">			#pragma fragment frag_blur</span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">		//2</span><br><span class="line">		Pass</span><br><span class="line">		&#123;</span><br><span class="line">			ZTest Off</span><br><span class="line">			Cull Off</span><br><span class="line"> </span><br><span class="line">			CGPROGRAM</span><br><span class="line">			#pragma vertex vert_add</span><br><span class="line">			#pragma fragment frag_add</span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>软边（外发光）：</p>
@@ -204,93 +423,480 @@
 <p>​    不用额外增加camera，非常方便。</p>
 <p>​    </p>
 
-        
-            <div class="donate-container">
-    <div class="donate-button">
-        <button id="donate-button">赞赏</button>
+      
     </div>
-    <div class="donate-img-container hide" id="donate-img-container">
-        <img id="donate-img" src="" data-src="/img/donate.jpg">
-        <p> 感谢鼓励 </p>
-    </div>
-</div>
-        
-        <div id="comment-container">
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unity/" rel="tag"># unity</a>
+          
+            <a href="/tags/shader/" rel="tag"># shader</a>
+          
         </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/27/各向异性的头发/" rel="next" title="unity shader实例2：各向异性的头发">
+                <i class="fa fa-chevron-left"></i> unity shader实例2：各向异性的头发
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
     </div>
-</div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
     </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Xujianming" />
+            
+              <p class="site-author-name" itemprop="name">Xujianming</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/xfate" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="380398802@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/shu-jian-piao-ling-84/activities" target="_blank" title="Zhihu">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Zhihu</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/yourname" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-法线外扩"><span class="nav-number">1.</span> <span class="nav-text">1.法线外扩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后处理实现描边效果"><span class="nav-number">2.</span> <span class="nav-text">后处理实现描边效果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#处理流程"><span class="nav-number">2.1.</span> <span class="nav-text">处理流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-普通后处理实现"><span class="nav-number">2.2.</span> <span class="nav-text">2.1 普通后处理实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Command-Buffer-实现"><span class="nav-number">2.3.</span> <span class="nav-text">2.2 Command Buffer 实现</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Xujianming</span>
+
+  
 </div>
 
 
-<footer class="footer">
-    <ul class="list-inline text-center">
-        
-        
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
 
         
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      本站访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
 
         
+      </div>
+    </footer>
 
-        
-        <li>
-            <a target="_blank"  href="https://github.com/xfate">
-                            <span class="fa-stack fa-lg">
-                                <i class="iconfont icon-github"></i>
-                            </span>
-            </a>
-        </li>
-        
-
-        
-
-    </ul>
     
-    <p>
-        <span>/</span>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
         
-        <span><a href="#">It helps SEO</a></span>
-        <span>/</span>
-        
-    </p>
+      </div>
     
-    <p>
-        <span id="busuanzi_container_site_pv">
-            <span id="busuanzi_value_site_pv"></span>PV
-        </span>
-        <span id="busuanzi_container_site_uv">
-            <span id="busuanzi_value_site_uv"></span>UV
-        </span>
-        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
-</footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
 
 
 
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'xfate',
+            repo: 'https://github.com/xfate/gitment.git',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'edabd17f5cc77a2ffc866b8df34762fbcfb496c0',
+            
+                client_id: '87c7a2753ab9099bb1fa'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
 
 </body>
-
-<script>
-    // We expose some of the variables needed by the front end
-    window.hexo_search_path = "search.json"
-    window.hexo_root = "/"
-    window.isPost = true
-</script>
-<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-<script src="/js/index.js"></script>
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-<script src="/js/gitment.js"></script>
-<script>
-    var gitment = new Gitment({
-        id: 'unity shader实例3：轮廓渲染-描边',
-        owner: 'aircloud',
-        repo: 'hexo-aircloud-blog',
-        oauth: {
-            client_id: 'your-id-created-by-https://github.com/settings/applications/new',
-            client_secret: 'your-secret-created-by-https://github.com/settings/applications/new',
-        },
-    })
-    gitment.render('comment-container')
-</script>
-
 </html>

@@ -1,145 +1,366 @@
 <!DOCTYPE html>
-<html lang="en">
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Xujianming的博客">
-    <meta name="keyword"  content="游戏开发">
-    <link rel="shortcut icon" href="/img/favicon.ico">
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
 
-    <title>
-        
-        unity shader实例1：matcap贴图 - Xujianming的博客 | Xujianming&#39;s Blog
-        
-    </title>
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/aircloud.css">
-    <link rel="stylesheet" href="/css/gitment.css">
-    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
-    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
-    <!-- ga & ba script hoook -->
-    <script></script>
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="unity,shader,matcap," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="MatCap（Material Capture),使用指定的材质球贴图，作为当前材质的视图空间环境贴图（view-space environment map），实现具有均一表面着色的反射材质物体的显示。  &amp;emsp;matcap贴图其实是从某个光照条件下，从某个摄像机方向，特定角度的表现结果，把这个光照结果映射到模型上。贴图和视角相关，如果移动模型，贴图没有任何变化，移动摄像机，贴图就会发生变">
+<meta name="keywords" content="unity,shader,matcap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="unity shader实例1：matcap贴图">
+<meta property="og:url" content="http://yoursite.com/2018/07/20/matcap贴图/index.html">
+<meta property="og:site_name" content="xjm&#39;s Blog">
+<meta property="og:description" content="MatCap（Material Capture),使用指定的材质球贴图，作为当前材质的视图空间环境贴图（view-space environment map），实现具有均一表面着色的反射材质物体的显示。  &amp;emsp;matcap贴图其实是从某个光照条件下，从某个摄像机方向，特定角度的表现结果，把这个光照结果映射到模型上。贴图和视角相关，如果移动模型，贴图没有任何变化，移动摄像机，贴图就会发生变">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/k33J4bg2LC.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/Flk6L2j8hJ.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/JmcHBDbHD7.png?imageslim">
+<meta property="og:updated_time" content="2018-08-11T14:21:58.155Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="unity shader实例1：matcap贴图">
+<meta name="twitter:description" content="MatCap（Material Capture),使用指定的材质球贴图，作为当前材质的视图空间环境贴图（view-space environment map），实现具有均一表面着色的反射材质物体的显示。  &amp;emsp;matcap贴图其实是从某个光照条件下，从某个摄像机方向，特定角度的表现结果，把这个光照结果映射到模型上。贴图和视角相关，如果移动模型，贴图没有任何变化，移动摄像机，贴图就会发生变">
+<meta name="twitter:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/k33J4bg2LC.png?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/20/matcap贴图/"/>
+
+
+
+
+
+  <title>unity shader实例1：matcap贴图 | xjm's Blog</title>
+  
+
+
+
+
+
+
+
+
 </head>
 
-<body>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-<div class="site-nav-toggle" id="site-nav-toggle">
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xjm's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">游戏开发笔记自留地</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
     <button>
-        <span class="btn-bar"></span>
-        <span class="btn-bar"></span>
-        <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
     </button>
+  </div>
 </div>
 
-<div class="index-about">
-    <i> 游戏开发笔记自留地 </i>
-</div>
+<nav class="site-nav">
+  
 
-<div class="index-container">
-    
-    <div class="index-left">
+  
+    <ul id="menu" class="menu">
+      
         
-<div class="nav" id="nav">
-    <div class="avatar-name">
-        <div class="avatar">
-            <img src="/img/avatar.jpg" />
-        </div>
-        <div class="name">
-            <i>Xujianming</i>
-        </div>
-    </div>
-    <div class="contents" id="nav-content">
-        <ul>
-            <li >
-                <a href="/">
-                    <i class="iconfont icon-shouye1"></i>
-                    <span>主页</span>
-                </a>
-            </li>
-            <li >
-                <a href="/tags">
-                    <i class="iconfont icon-biaoqian1"></i>
-                    <span>标签</span>
-                </a>
-            </li>
-            <li >
-                <a href="/archive">
-                    <i class="iconfont icon-guidang2"></i>
-                    <span>存档</span>
-                </a>
-            </li>
-            <li >
-                <a href="/about/">
-                    <i class="iconfont icon-guanyu2"></i>
-                    <span>关于</span>
-                </a>
-            </li>
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
             
-            <li>
-                <a id="search">
-                    <i class="iconfont icon-sousuo1"></i>
-                    <span>搜索</span>
-                </a>
-            </li>
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-        </ul>
-    </div>
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
     
-        <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-matcap基础实现"><span class="toc-text">1.matcap基础实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Matcap-贴图获取"><span class="toc-text">Matcap 贴图获取</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-matcap-法线贴图实现"><span class="toc-text">2.matcap + 法线贴图实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-matcap-实现水晶效果"><span class="toc-text">3.matcap 实现水晶效果</span></a></li></ol>
-</div>
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/20/matcap贴图/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Xujianming">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xjm's Blog">
+    </span>
+
     
-</div>
+      <header class="post-header">
 
+        
+        
+          <h1 class="post-title" itemprop="name headline">unity shader实例1：matcap贴图</h1>
+        
 
-<div class="search-field" id="search-field">
-    <div class="search-container">
-        <div class="search-input">
-            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
-            <input id="search-input"/>
-            <span id="begin-search">搜索</span>
-        </div>
-        <div class="search-result-container" id="search-result-container">
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-20T13:43:12+08:00">
+                2018-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/unity-shader/" itemprop="url" rel="index">
+                    <span itemprop="name">unity shader</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/20/matcap贴图/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/07/20/matcap贴图/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv">本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
 
         </div>
-    </div>
-</div>
-        <div class="index-about-mobile">
-            <i> 游戏开发笔记自留地 </i>
-        </div>
-    </div>
+      </header>
     
-    <div class="index-middle">
-        <!-- Main Content -->
-        
 
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
-<div class="post-container">
-    <div class="post-title">
-        unity shader实例1：matcap贴图
-    </div>
+      
+      
 
-    <div class="post-meta">
-        <span class="attr">发布于：<span>2018-07-20 13:43:12</span></span>
-        
-        <span class="attr">标签：/
-        
-        <a class="tag" href="/tags/#unity" title="unity">unity</a>
-        <span>/</span>
-        
-        <a class="tag" href="/tags/#shader" title="shader">shader</a>
-        <span>/</span>
-        
-        
-        </span>
-        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
-</span>
-</span>
-    </div>
-    <div class="post-content ">
+      
         <blockquote>
 <p>MatCap（Material Capture),使用指定的材质球贴图，作为当前材质的视图空间环境贴图（view-space environment map），实现具有均一表面着色的反射材质物体的显示。</p>
 </blockquote>
@@ -150,100 +371,493 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">            <span class="function">v2f <span class="title">vert</span><span class="params">(appdata v)</span></span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                v2f o;</span><br><span class="line">                o.vertex = UnityObjectToClipPos(v.vertex);</span><br><span class="line">                float3worldNorm = normalize(mul(float4(v.normal,<span class="number">0.0f</span>),unity_WorldToObject));</span><br><span class="line">                worldNorm = mul((float3x3)UNITY_MATRIX_V,worldNorm);</span><br><span class="line">                o.cap = worldNorm.xy * <span class="number">0.5</span>+ <span class="number">0.5</span>;</span><br><span class="line">                returno;</span><br><span class="line">            &#125;         </span><br><span class="line">            fixed4 frag(v2f i) : SV_Target</span><br><span class="line">            &#123;</span><br><span class="line">                fixed4matcapColor = tex2D(_MatCap,i.cap);</span><br><span class="line">                returnmatcapColor * _MainColor;</span><br><span class="line">            &#125;</span><br><span class="line">            ENDCG</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>代码关键在：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">float3 worldNorm = normalize(mul(float4(v.normal,<span class="number">0.0f</span>),unity_WorldToObject));</span><br><span class="line">                worldNorm = mul((float3x3)UNITY_MATRIX_V,worldNorm);</span><br></pre></td></tr></table></figure></p>
 <p>把法线先转到世界空间，再转到视图空间，因为视图空间下的法线向量是[-1，1]，贴图的UV是[0，1]，所以还得做个一个映射。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> o.cap = worldNorm.xy * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br></pre></td></tr></table></figure></p>
-<p>模拟的金属表现效果：<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/gEGf44liCg.png?imageslim" alt="mark"></p>
+<p>模拟的金属表现效果：</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/k33J4bg2LC.png?imageslim" alt="mark"></p>
 <h3 id="2-matcap-法线贴图实现"><a href="#2-matcap-法线贴图实现" class="headerlink" title="2.matcap + 法线贴图实现"></a>2.matcap + 法线贴图实现</h3><p>matcap贴图再配合法线贴图让效果更加精细，一样地，从法线贴图取得法线后，转换到视图空间读取</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">  <span class="function">v2f <span class="title">vert</span> <span class="params">(appdata v)</span></span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                v2f o;</span><br><span class="line">                o.vertex = UnityObjectToClipPos(v.vertex);</span><br><span class="line">                o.uv = v.uv;</span><br><span class="line">                float3 worldNorm = normalize(mul(float4(v.normal,<span class="number">0.0f</span>),unity_WorldToObject));</span><br><span class="line">                float3 worldTangent = mul(unity_ObjectToWorld,v.tangent);</span><br><span class="line">                float3 worldBinormal = cross(worldNorm,worldTangent)*v.tangent.w;</span><br><span class="line">                float3 worldPos = mul(unity_ObjectToWorld,v.vertex);</span><br><span class="line">                o.TtoW1 = float4(worldTangent.x,worldBinormal.x,worldNorm.x,worldPos.x);</span><br><span class="line">                o.TtoW2 = float4(worldTangent.y,worldBinormal.y,worldNorm.y,worldPos.y);</span><br><span class="line">                o.TtoW3 = float4(worldTangent.z,worldBinormal.z,worldNorm.z,worldPos.z);</span><br><span class="line">                <span class="keyword">return</span> o;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            fixed4 frag (v2f i) : SV_Target</span><br><span class="line">            &#123;</span><br><span class="line">                fixed4 mainTexColor = tex2D(_MainTex,i.uv);</span><br><span class="line">                fixed3 normal = UnpackNormal(tex2D(_NormalMap,i.uv));</span><br><span class="line">                float3 worldNorm;</span><br><span class="line">                worldNorm.x = dot(i.TtoW1.xyz,normal);</span><br><span class="line">                worldNorm.y = dot(i.TtoW2.xyz,normal);</span><br><span class="line">                worldNorm.z = dot(i.TtoW3.xyz,normal);</span><br><span class="line">                fixed3 worldNormView = normalize(mul((float3x3)UNITY_MATRIX_V,worldNorm));</span><br><span class="line">                fixed4 matcapColor = tex2D(_MatCap,worldNormView.xy);</span><br><span class="line">                <span class="keyword">return</span> matcapColor*mainTexColor*_MainColor*<span class="number">2</span>;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
-<p>shader效果：<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/LCFCefI18j.png?imageslim" alt="mark"></p>
-<h3 id="3-matcap-实现水晶效果"><a href="#3-matcap-实现水晶效果" class="headerlink" title="3.matcap 实现水晶效果"></a>3.matcap 实现水晶效果</h3><p>&emsp;一般我们实现带有反射或者折射效果的物体，我们习惯用cube 贴图来实现。但是cube贴图实际是6张贴图，在手机上我们可以考虑使用消耗更低的matcap贴图来实现。<br>通过反射和折射之后得到的uv来读取matcap贴图。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">			fixed3 worldViewDir = UnityWorldSpaceViewDir(worldPos);</span><br><span class="line">                fixed3 worldNormView = normalize(mul((float3x3)UNITY_MATRIX_V,worldNorm));</span><br><span class="line">			worldNormView.xy  = worldNormView.xy * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//反射</span></span><br><span class="line">			float3 reflectDir = reflect(-worldViewDir,worldNorm);</span><br><span class="line">			float2 reflectuv =  normalize(mul((float3x3)UNITY_MATRIX_V,reflectDir));</span><br><span class="line">			reflectuv = reflectuv.xy * _reflRatio + <span class="number">0.5</span>;</span><br><span class="line">			fixed4 reflectColor = tex2D(_MatCap,reflectuv.xy);</span><br><span class="line">			<span class="comment">//折射</span></span><br><span class="line">			fixed3 worldRefr = refract(-normalize(worldViewDir), normalize(worldNorm), <span class="number">0.75f</span>);</span><br><span class="line">			float2 refractuv =  normalize(mul((float3x3)UNITY_MATRIX_V,worldRefr));</span><br><span class="line">			refractuv = refractuv.xy * _RefractRatio + <span class="number">0.5</span>;</span><br><span class="line">			fixed4 refractColor = tex2D(_RefractMatCap,refractuv.xy)*_RefractColor;</span><br><span class="line">			fixed4 diffuse = mainTexColor*_MainColor;</span><br><span class="line"><span class="keyword">return</span> diffuse + lerp(reflectColor ,refractColor,_FrenselScale);</span><br></pre></td></tr></table></figure></p>
-<p>带了折射效果的水晶如图。还可以额外用一张mask贴图的rgb通道控制物体的折射和反射部分。<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/39LfAdGLG7.png?imageslim" alt="mark"></p>
+<p>shader效果：<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/Flk6L2j8hJ.png?imageslim" alt="mark"></p>
+<h3 id="3-matcap-实现水晶效果"><a href="#3-matcap-实现水晶效果" class="headerlink" title="3.matcap 实现水晶效果"></a>3.matcap 实现水晶效果</h3><p>一般我们实现带有反射或者折射效果的物体，我们习惯用cube 贴图来实现。但是cube贴图实际是6张贴图，在手机上我们可以考虑使用消耗更低的matcap贴图来实现。</p>
+<p>&emsp;一般我们实现带有反射或者折射效果的物体，我们习惯用cube 贴图来实现。但是cube贴图实际是6张贴图，在手机上我们可以考虑使用消耗更低的matcap贴图来实现。<br>通过反射和折射之后得到的uv来读取matcap贴图。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">			fixed3 worldViewDir = UnityWorldSpaceViewDir(worldPos);</span><br><span class="line">                fixed3 worldNormView = normalize(mul((float3x3)UNITY_MATRIX_V,worldNorm));</span><br><span class="line">			worldNormView.xy  = worldNormView.xy * <span class="number">0.5</span> + <span class="number">0.5</span>;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//反射</span></span><br><span class="line">			float3 reflectDir = reflect(-worldViewDir,worldNorm);</span><br><span class="line">			float2 reflectuv =  normalize(mul((float3x3)UNITY_MATRIX_V,reflectDir));</span><br><span class="line">			reflectuv = reflectuv.xy * _reflRatio + <span class="number">0.5</span>;</span><br><span class="line">			fixed4 reflectColor = tex2D(_MatCap,reflectuv.xy);</span><br><span class="line">			<span class="comment">//折射</span></span><br><span class="line">			fixed3 worldRefr = refract(-normalize(worldViewDir), normalize(worldNorm), <span class="number">0.75f</span>);</span><br><span class="line">			float2 refractuv =  normalize(mul((float3x3)UNITY_MATRIX_V,worldRefr));</span><br><span class="line">			refractuv = refractuv.xy * _RefractRatio + <span class="number">0.5</span>;</span><br><span class="line">			fixed4 refractColor = tex2D(_RefractMatCap,refractuv.xy)*_RefractColor;</span><br><span class="line">			fixed4 diffuse = mainTexColor*_MainColor;</span><br><span class="line"><span class="keyword">return</span> diffuse + lerp(reflectColor ,refractColor,_FrenselScale);</span><br></pre></td></tr></table></figure>
+<p>带了折射效果的水晶如图。还可以额外用一张mask贴图的rgb通道控制物体的折射和反射部分。</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/JmcHBDbHD7.png?imageslim" width="200px" height="200px" align="center/"> </p>
 
-        
-            <div class="donate-container">
-    <div class="donate-button">
-        <button id="donate-button">赞赏</button>
+      
     </div>
-    <div class="donate-img-container hide" id="donate-img-container">
-        <img id="donate-img" src="" data-src="/img/donate.jpg">
-        <p> 感谢鼓励 </p>
-    </div>
-</div>
-        
-        <div id="comment-container">
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unity/" rel="tag"># unity</a>
+          
+            <a href="/tags/shader/" rel="tag"># shader</a>
+          
+            <a href="/tags/matcap/" rel="tag"># matcap</a>
+          
         </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/27/各向异性的头发/" rel="prev" title="unity shader实例2：各向异性的头发">
+                unity shader实例2：各向异性的头发 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
     </div>
-</div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
     </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Xujianming" />
+            
+              <p class="site-author-name" itemprop="name">Xujianming</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/xfate" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="380398802@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/shu-jian-piao-ling-84/activities" target="_blank" title="Zhihu">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Zhihu</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/yourname" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-matcap基础实现"><span class="nav-number">1.</span> <span class="nav-text">1.matcap基础实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Matcap-贴图获取"><span class="nav-number">1.1.</span> <span class="nav-text">Matcap 贴图获取</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-matcap-法线贴图实现"><span class="nav-number">2.</span> <span class="nav-text">2.matcap + 法线贴图实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-matcap-实现水晶效果"><span class="nav-number">3.</span> <span class="nav-text">3.matcap 实现水晶效果</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Xujianming</span>
+
+  
 </div>
 
 
-<footer class="footer">
-    <ul class="list-inline text-center">
-        
-        
+
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
 
         
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      本站访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
 
         
+      </div>
+    </footer>
 
-        
-        <li>
-            <a target="_blank"  href="https://github.com/xfate">
-                            <span class="fa-stack fa-lg">
-                                <i class="iconfont icon-github"></i>
-                            </span>
-            </a>
-        </li>
-        
-
-        
-
-    </ul>
     
-    <p>
-        <span>/</span>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
         
-        <span><a href="#">It helps SEO</a></span>
-        <span>/</span>
-        
-    </p>
+      </div>
     
-    <p>
-        <span id="busuanzi_container_site_pv">
-            <span id="busuanzi_value_site_pv"></span>PV
-        </span>
-        <span id="busuanzi_container_site_uv">
-            <span id="busuanzi_value_site_uv"></span>UV
-        </span>
-        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
-</footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
 
 
 
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'xfate',
+            repo: 'https://github.com/xfate/gitment.git',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'edabd17f5cc77a2ffc866b8df34762fbcfb496c0',
+            
+                client_id: '87c7a2753ab9099bb1fa'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
 
 </body>
-
-<script>
-    // We expose some of the variables needed by the front end
-    window.hexo_search_path = "search.json"
-    window.hexo_root = "/"
-    window.isPost = true
-</script>
-<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-<script src="/js/index.js"></script>
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-<script src="/js/gitment.js"></script>
-<script>
-    var gitment = new Gitment({
-        id: 'unity shader实例1：matcap贴图',
-        owner: 'aircloud',
-        repo: 'hexo-aircloud-blog',
-        oauth: {
-            client_id: 'your-id-created-by-https://github.com/settings/applications/new',
-            client_secret: 'your-secret-created-by-https://github.com/settings/applications/new',
-        },
-    })
-    gitment.render('comment-container')
-</script>
-
 </html>
