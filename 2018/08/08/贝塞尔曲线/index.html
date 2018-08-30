@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="unity,shader,各向异性," />
+  <meta name="keywords" content="unity,数学," />
 
 
 
@@ -79,24 +79,23 @@
 
 
 
-<meta name="description" content="​    什么是各向异性？wiki百科:非均向性（anisotropy），或作各向异性，与各向同性相反，指物体的全部或部分物理、化学等性质随方向的不同而有所变化的特性。 来自wiki的解释如上。 https://zh.wikipedia.org/wiki/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7  ​    我们主要是关注各向异性的光学特性，这个特性存在各种各样的物">
-<meta name="keywords" content="unity,shader,各向异性">
+<meta name="description" content="贝塞尔曲线  贝塞尔曲线(Bézier curve)，又称贝济埃曲线，是应用于二维图形应用程序的数学曲线。一般的矢量图形软件通过它来精确画出曲线。 二次贝塞尔曲线：   一次贝塞尔曲线：  代数方式： 看一次贝塞尔曲线：其实就是P0和P1的线性插值，$$B\left( t \right) =P_0+\left( P_1-P_0 \right) \Rightarrow B\left( t \righ">
+<meta name="keywords" content="unity,数学">
 <meta property="og:type" content="article">
-<meta property="og:title" content="unity shader实例2：各向异性的头发">
-<meta property="og:url" content="http://yoursite.com/2018/07/27/各向异性的头发/index.html">
+<meta property="og:title" content="贝塞尔曲线">
+<meta property="og:url" content="http://yoursite.com/2018/08/08/贝塞尔曲线/index.html">
 <meta property="og:site_name" content="xjm&#39;s Blog">
-<meta property="og:description" content="​    什么是各向异性？wiki百科:非均向性（anisotropy），或作各向异性，与各向同性相反，指物体的全部或部分物理、化学等性质随方向的不同而有所变化的特性。 来自wiki的解释如上。 https://zh.wikipedia.org/wiki/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7  ​    我们主要是关注各向异性的光学特性，这个特性存在各种各样的物">
+<meta property="og:description" content="贝塞尔曲线  贝塞尔曲线(Bézier curve)，又称贝济埃曲线，是应用于二维图形应用程序的数学曲线。一般的矢量图形软件通过它来精确画出曲线。 二次贝塞尔曲线：   一次贝塞尔曲线：  代数方式： 看一次贝塞尔曲线：其实就是P0和P1的线性插值，$$B\left( t \right) =P_0+\left( P_1-P_0 \right) \Rightarrow B\left( t \righ">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/4FJaak5aAA.png?imageslim">
-<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/HGAH4H24mJ.png?imageslim">
-<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/jJEjldijiL.png?imageslim">
-<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180807/2CK8H0IBbB.png?imageslim">
-<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/bJgLKAaLHk.png?imageslim">
-<meta property="og:updated_time" content="2018-08-30T14:53:53.859Z">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180830/kih3ed6cFA.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180830/dC15gDHD33.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180830/A97d5dDbjl.png?imageslim">
+<meta property="og:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180830/I4iei8D84e.png?imageslim">
+<meta property="og:updated_time" content="2018-08-30T15:34:51.002Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="unity shader实例2：各向异性的头发">
-<meta name="twitter:description" content="​    什么是各向异性？wiki百科:非均向性（anisotropy），或作各向异性，与各向同性相反，指物体的全部或部分物理、化学等性质随方向的不同而有所变化的特性。 来自wiki的解释如上。 https://zh.wikipedia.org/wiki/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7  ​    我们主要是关注各向异性的光学特性，这个特性存在各种各样的物">
-<meta name="twitter:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180810/4FJaak5aAA.png?imageslim">
+<meta name="twitter:title" content="贝塞尔曲线">
+<meta name="twitter:description" content="贝塞尔曲线  贝塞尔曲线(Bézier curve)，又称贝济埃曲线，是应用于二维图形应用程序的数学曲线。一般的矢量图形软件通过它来精确画出曲线。 二次贝塞尔曲线：   一次贝塞尔曲线：  代数方式： 看一次贝塞尔曲线：其实就是P0和P1的线性插值，$$B\left( t \right) =P_0+\left( P_1-P_0 \right) \Rightarrow B\left( t \righ">
+<meta name="twitter:image" content="http://pd1fsftip.bkt.clouddn.com/blog/180830/kih3ed6cFA.png?imageslim">
 
 
 
@@ -126,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/27/各向异性的头发/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/08/08/贝塞尔曲线/"/>
 
 
 
 
 
-  <title>unity shader实例2：各向异性的头发 | xjm's Blog</title>
+  <title>贝塞尔曲线 | xjm's Blog</title>
   
 
 
@@ -259,7 +258,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/27/各向异性的头发/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/08/贝塞尔曲线/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xujianming">
@@ -276,7 +275,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">unity shader实例2：各向异性的头发</h1>
+          <h1 class="post-title" itemprop="name headline">贝塞尔曲线</h1>
         
 
         <div class="post-meta">
@@ -288,8 +287,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-27T00:30:42+08:00">
-                2018-07-27
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-08T20:39:47+08:00">
+                2018-08-08
               </time>
             
 
@@ -311,8 +310,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/unity-shader/" itemprop="url" rel="index">
-                    <span itemprop="name">unity shader</span>
+                  <a href="/categories/unity/" itemprop="url" rel="index">
+                    <span itemprop="name">unity</span>
                   </a>
                 </span>
 
@@ -329,8 +328,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/07/27/各向异性的头发/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/07/27/各向异性的头发/" itemprop="commentsCount"></span>
+                <a href="/2018/08/08/贝塞尔曲线/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/08/08/贝塞尔曲线/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -363,20 +362,25 @@
       
 
       
-        <p>​    什么是各向异性？wiki百科:<strong>非均向性</strong>（<strong>anisotropy</strong>），或作<strong>各向异性</strong>，与<strong>各向同性</strong>相反，指物体的全部或部分物理、化学等性质随方向的不同而有所变化的特性。</p>
-<p>来自wiki的解释如上。</p>
-<p><a href="https://zh.wikipedia.org/wiki/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7</a> </p>
-<p>​    我们主要是关注各向异性的光学特性，这个特性存在各种各样的物体上，比如头发，丝绸 金属等。<br>本文主要讲一下头发的渲染。<br>整个渲染模型来自于2012年ATi的一篇头发渲染文章：<br><a href="https://developer.amd.com/wordpress/media/2012/10/Scheuermann_HairRendering.pdf" target="_blank" rel="noopener">https://developer.amd.com/wordpress/media/2012/10/Scheuermann_HairRendering.pdf</a></p>
-<h2 id="kajiya-kay-hair-model"><a href="#kajiya-kay-hair-model" class="headerlink" title="kajiya kay hair model"></a>kajiya kay hair model</h2><p>​    Kajiya kay hair model 高光模型如图<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/4FJaak5aAA.png?imageslim" alt="mark"><br>N：法线<br>T：切线<br>L： 灯光方向<br>H：半角向量（L+V）<br>V：视角方向<br>上图假定了发丝方向和切线方向一致。然后使用的是发丝的切线而不是这一点的法线来进行计算高光。<br>Kajiya kay hair model 高光模型用以下公式代替phong高光</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fixed StrandSpecular(fixed3 T,fixed3 V,fixed3 L,fixed exponent)</span><br><span class="line">&#123;</span><br><span class="line">	float3 H = normalize(L+V);</span><br><span class="line">	float dotTH = dot(T,H);</span><br><span class="line">	float sinTH = sqrt(1- dotTH * dotTH);</span><br><span class="line">	float dirAtten = smoothstep(-1,0,dotTH);	</span><br><span class="line">	return dirAtten*pow(sinTH,exponent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>dotTH表示向量H在T方向的投影长度，值是-1，1，经过smoothstep函数的处理，让高光衰减随着TH之间的夹角平滑过渡。因此dirAtten 的作用是通过TH的方向来控制高光范围的衰减系数。</p>
-<p>​    为了让高光更自然点，随着发丝拉伸偏移，需要对切线进行偏移。<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/HGAH4H24mJ.png?imageslim" alt="mark"><br>​    正向的偏移意味着向发根的高光偏移，而负向的偏移则意味着偏向发梢。</p>
-<p>​    偏移多少呢？可以设定一个shift偏移量，shift 可以通过纹理采样得到。<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/jJEjldijiL.png?imageslim" alt="mark"><br>可以得到高光偏移的公式</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fixed3 <span class="title">ShiftTangent</span><span class="params">(float3 tangent,float3 normal,<span class="keyword">float</span> shift)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> normalize(tangent + shift * normal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意，因为假定了切线方向和头发方向一致，这里的参数用的是切线，实际上很多纹理的头发uv展开是从上到下的，而tangent方向是从左到右的，这个时候，传进ShiftTangent函数的就不是tangent，而是binormal。<br><img src="http://pd1fsftip.bkt.clouddn.com/blog/180807/2CK8H0IBbB.png?imageslim" alt="mark"><br>​    在kajiya kay 头发着色模型里，有两层高光。</p>
-<p>​    一层高光向发尖偏移。第二层高光向发根偏移，混合了头发自身的颜色。</p>
-<h2 id="关键代码实现"><a href="#关键代码实现" class="headerlink" title="关键代码实现"></a>关键代码实现</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">float3 worldPos = float3(i.TtoW0.w,i.TtoW1.w,i.TtoW2.w);</span><br><span class="line">float3 lightDir = normalize(UnityWorldSpaceLightDir(worldPos));</span><br><span class="line">float3 viewDir = normalize(UnityWorldSpaceViewDir(worldPos));</span><br><span class="line">float3 tNormal  = UnpackNormal(tex2D(_NormalMap,i.uv));</span><br><span class="line">fixed3 worldBinormal = normalize(half3(i.TtoW0.y, i.TtoW1.y, i.TtoW2.y));	</span><br><span class="line">float3x3 matT2W = float3x3(i.TtoW0.xyz,i.TtoW1.xyz,i.TtoW2.xyz);</span><br><span class="line">float3 normal = normalize(mul(matT2W,tNormal));</span><br><span class="line">float4 mainTex =  tex2D(_MainTex,i.uv);</span><br><span class="line">float3 tangent = float3(i.TtoW0.x,i.TtoW1.x,i.TtoW2.x);</span><br><span class="line">float shiftTex = tex2D(_tSpecShift,i.uv).r;</span><br><span class="line">//计算两层高光偏移</span><br><span class="line">float3 t1 = ShiftTangent(worldBinormal,normal,_PrimaryShift+shiftTex);</span><br><span class="line">float3 t2 = ShiftTangent(worldBinormal,normal,_SecondaryShift+shiftTex);</span><br><span class="line">float3 diffuse = mainTex.rgb* MainColor.rgb;</span><br><span class="line">//合并两层高光</span><br><span class="line">half3 spec1 = StrandSpecular(t1, viewDir, lightDir, _specExp1)* _specularColor1;</span><br><span class="line">half3 spec2 = StrandSpecular(t2, viewDir, lightDir, _specExp2)* _specularColor2;</span><br><span class="line">float3 specular = spec1*_specular;</span><br><span class="line">specular += spec2*_specularColor2*_specular;`</span><br></pre></td></tr></table></figure>
-<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180810/bJgLKAaLHk.png?imageslim" alt="mark"></p>
+        <p>贝塞尔曲线</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180830/kih3ed6cFA.png?imageslim" alt="mark"></p>
+<p>贝塞尔曲线(Bézier curve)，又称贝济埃曲线，是应用于二维图形应用程序的数学曲线。一般的矢量图形软件通过它来精确画出曲线。</p>
+<p>二次贝塞尔曲线：</p>
+<p> <img src="http://pd1fsftip.bkt.clouddn.com/blog/180830/dC15gDHD33.png?imageslim" alt="mark"></p>
+<p>一次贝塞尔曲线：</p>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180830/A97d5dDbjl.png?imageslim" alt="mark"></p>
+<p>代数方式：</p>
+<p>看一次贝塞尔曲线：其实就是P0和P1的线性插值，<br>$$<br>B\left( t \right) =P_0+\left( P_1-P_0 \right) \Rightarrow B\left( t \right) =\left( 1-t \right) P_0+tP_1<br>$$<br>二次贝塞尔曲线是由2个点决定，而这两个点是由一次贝塞尔曲线决定的。等同有P0P1的一次贝塞尔曲线和P1P2的一次贝塞尔曲线的线性插值得来。</p>
+<p>因此可以得到：<br>$$<br>P\left( t \right) =\left( 1-t \right) P_0+tP_1<br>$$</p>
+<p>$$<br>Q\left( t \right) =\left( 1-t \right) P_1+tP_2<br>$$</p>
+<p>$$<br>B\left( t \right) =\left( 1-t \right) P_t+tQ_t\Rightarrow \left( 1-t \right) ^2P_0+\left( 1-t \right) tP_1+\left( 1-t \right) tP_1+t^2P_2<br>$$</p>
+<p>三阶贝塞尔曲线，由4个点控制，等同于P0P1P2的二阶贝塞尔曲线和P1P2P3的二阶贝塞尔曲线的线性插值决定。<br>$$<br>P\left( t \right) =\left( 1-t \right) ^2P_0+2\left( 1-t \right) tP_1+t^2P_2<br>$$</p>
+<p>$$<br>Q\left( t \right) =\left( 1-t \right) ^2P_1+2\left( 1-t \right) tP_2+t^2P_3<br>$$</p>
+<p>可以得到：<br>$$<br>B\left( t \right) =\left( 1-t \right) P_t+tQ_t\Rightarrow \left( 1-t \right) ^3P_0+3\left( 1-t \right) ^2tP_1+3\left( 1-t \right) ^2tP_2+t^3P_3<br>$$<br> 下面在Unity里实现二阶贝塞尔曲线：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">public class BezierUtil  &#123;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line"></span><br><span class="line">    /// 获取二阶贝塞尔曲线的点</span><br><span class="line"></span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;p0&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;p1&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;p2&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;t&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    public static Vector3 GetBezierPoint_SecondOrder(Vector3 p0, Vector3 p1, Vector3 p2,float t)</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        return (1-t) * (1-t) * p0 + 2(1 - t)t * p1 + t * t * p2;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /// &lt;summary&gt;</span><br><span class="line"></span><br><span class="line">    /// 获取贝塞尔曲线</span><br><span class="line"></span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;points&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;p0&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;p1&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;p2&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    /// &lt;param name=&quot;num&quot;&gt;&lt;/param&gt;</span><br><span class="line"></span><br><span class="line">    public static void GetBezier(ref Vector3[] points,Vector3 p0, Vector3 p1, Vector3 p2,int num)</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        for (int i = 1; i &lt;= num; ++i)</span><br><span class="line"></span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line">            float t =  i / (float)num;</span><br><span class="line"></span><br><span class="line">            points[i-1] = GetBezierPoint_SecondOrder(p0, p1, p2, t);</span><br><span class="line"></span><br><span class="line">      </span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://pd1fsftip.bkt.clouddn.com/blog/180830/I4iei8D84e.png?imageslim" alt="mark"></p>
+<p>在Unity可以用GL来画线：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">void DrawLine_Impl(Vector3 [] verts, Color color)</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        GL.PushMatrix(); //保存当前Matirx  </span><br><span class="line"></span><br><span class="line">        LineMat.SetPass(0); //刷新当前材质  </span><br><span class="line"></span><br><span class="line">        GL.LoadPixelMatrix();//设置pixelMatrix  </span><br><span class="line"></span><br><span class="line">        GL.Color(color);</span><br><span class="line"></span><br><span class="line">        GL.Begin(GL.LINES);</span><br><span class="line"></span><br><span class="line">      </span><br><span class="line"></span><br><span class="line">        for (int i = 0; i &lt; verts.Length; ++i)</span><br><span class="line"></span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line">            if (i - 1 &gt;= 0)</span><br><span class="line"></span><br><span class="line">                GL.Vertex(verts[i - 1]);</span><br><span class="line"></span><br><span class="line">            else</span><br><span class="line"></span><br><span class="line">                GL.Vertex(verts[0]);</span><br><span class="line"></span><br><span class="line">            GL.Vertex(verts[i]);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        GL.End();</span><br><span class="line"></span><br><span class="line">        GL.PopMatrix();//读取之前的Matrix </span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -396,9 +400,7 @@
           
             <a href="/tags/unity/" rel="tag"># unity</a>
           
-            <a href="/tags/shader/" rel="tag"># shader</a>
-          
-            <a href="/tags/各向异性/" rel="tag"># 各向异性</a>
+            <a href="/tags/数学/" rel="tag"># 数学</a>
           
         </div>
       
@@ -411,8 +413,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/20/matcap贴图/" rel="next" title="unity shader实例1：matcap贴图">
-                <i class="fa fa-chevron-left"></i> unity shader实例1：matcap贴图
+              <a href="/2018/08/07/轮廓渲染-描边/" rel="next" title="unity shader实例3：轮廓渲染-描边">
+                <i class="fa fa-chevron-left"></i> unity shader实例3：轮廓渲染-描边
               </a>
             
           </div>
@@ -420,10 +422,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/07/轮廓渲染-描边/" rel="prev" title="unity shader实例3：轮廓渲染-描边">
-                unity shader实例3：轮廓渲染-描边 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -482,17 +480,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -584,22 +573,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#kajiya-kay-hair-model"><span class="nav-number">1.</span> <span class="nav-text">kajiya kay hair model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关键代码实现"><span class="nav-number">2.</span> <span class="nav-text">关键代码实现</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -810,7 +783,7 @@
       <script type="text/javascript">
       function renderGitment(){
         var gitment = new Gitmint({
-            id: 'unity shader实例2：各向异性的头发', 
+            id: '贝塞尔曲线', 
             owner: 'xfate',
             repo: 'xfate.github.io',
             
